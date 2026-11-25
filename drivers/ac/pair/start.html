@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --accent: #1677c8;
+      --accent-dark: #0b5fa5;
+      --soft: #eef7ff;
+      --border: #d6e2ec;
+      --text: #17202a;
+      --muted: #657586;
+      --error: #b42318;
+      --success: #067647;
+      color-scheme: light dark;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 18px 16px 28px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+    .hero {
+      width: 82px;
+      height: 82px;
+      border-radius: 24px;
+      margin: 0 auto 14px;
+      background: linear-gradient(145deg, #1a8fe3, var(--accent-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 14px 28px rgba(22, 119, 200, .22);
+    }
+    .hero svg { width: 54px; height: 54px; stroke: white; fill: none; stroke-width: 2; }
+    h1 { font-size: 25px; text-align: center; margin: 0 0 7px; line-height: 1.2; }
+    .subtitle { text-align: center; color: var(--muted); margin: 0 0 17px; line-height: 1.45; font-size: 14px; }
+    .notice {
+      background: var(--soft);
+      border: 1px solid #c8e2f7;
+      border-radius: 12px;
+      padding: 12px 13px;
+      color: #24516f;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      margin: 15px 0 0;
+      padding: 5px 13px 14px;
+    }
+    legend { padding: 0 7px; font-size: 13px; font-weight: 700; }
+    label { display: block; font-size: 13px; font-weight: 700; margin: 13px 0 6px; }
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 16px;
+      color: var(--text);
+      background: transparent;
+      outline: none;
+    }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22, 119, 200, .12); }
+    .hint { color: var(--muted); font-size: 12px; line-height: 1.4; margin-top: 5px; }
+    details { margin-top: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 11px 13px; }
+    summary { cursor: pointer; font-weight: 700; font-size: 13px; }
+    .action-button {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 18px;
+      background: linear-gradient(135deg, #227cf4, #45b8ef);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 750;
+      cursor: pointer;
+      min-height: 50px;
+    }
+    .action-button:disabled { opacity: .6; cursor: default; }
+    #status { min-height: 22px; margin-top: 12px; color: var(--muted); text-align: center; font-size: 13px; line-height: 1.4; }
+    #status.error { color: var(--error); }
+    #status.success { color: var(--success); }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(22, 119, 200, .2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+      vertical-align: -3px;
+      margin-inline-end: 7px;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-color-scheme: dark) {
+      :root { --text: #f4f6f8; --muted: #aeb8c2; --border: #414955; --soft: #142c3f; }
+      .notice { color: #cce9ff; border-color: #285b7f; }
+      input { background: rgba(255,255,255,.03); }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero" aria-hidden="true">
+    <svg viewBox="0 0 48 48">
+      <path d="M8 13h32v19H8z" />
+      <path d="M13 19h22M15 27c3 4 7 4 10 0m1 0c3 4 7 4 10 0" />
+      <path d="M15 37h18" />
+    </svg>
+  </div>
+
+  <h1 id="title">Midea LAN</h1>
+  <p class="subtitle" id="subtitle">Connect your Midea air conditioner to Homey over the local network.</p>
+  <div class="notice" id="notice">SmartHome is used only during pairing to obtain the local V3 token and key. The password is not stored.</div>
+
+  <form id="pair-form" novalidate>
+    <label for="ip" id="ip-label">Air conditioner IP address</label>
+    <input id="ip" inputmode="decimal" autocomplete="off" placeholder="192.168.1.123" />
+    <div class="hint" id="ip-hint">Recommended: reserve this address in your router. Leave it empty only to try network discovery.</div>
+
+    <fieldset>
+      <legend id="smarthome-legend">SmartHome account</legend>
+
+      <label for="account" id="account-label">SmartHome e-mail or phone</label>
+      <input id="account" type="text" autocomplete="username" placeholder="name@example.com" />
+
+      <label for="password" id="password-label">SmartHome password</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
+      <div class="hint" id="login-hint">Required for most V3 Wi-Fi modules. The password is not stored after pairing.</div>
+    </fieldset>
+
+    <details>
+      <summary id="advanced-label">Advanced: use an existing V3 token and key</summary>
+      <label for="token" id="token-label">V3 token</label>
+      <input id="token" type="password" autocomplete="off" />
+      <label for="key" id="key-label">V3 key</label>
+      <input id="key" type="password" autocomplete="off" />
+      <div class="hint" id="advanced-hint">Use this only when you already have both values backed up.</div>
+    </details>
+
+    <button class="action-button" id="connect" type="submit">Sign in to SmartHome and find the AC</button>
+    <div id="status" role="status" aria-live="polite">Enter the IP address and SmartHome credentials.</div>
+  </form>
+
+  <script>
+    function translate(key, fallback) {
+      try {
+        var value = Homey.__(key);
+        if (typeof value === 'string' && value && value !== key) return value;
+      } catch (error) {}
+      return fallback;
+    }
+
+    function emitAsync(event, data) {
+      return new Promise(function(resolve, reject) {
+        var settled = false;
+        function done(error, result) {
+          if (settled) return;
+          settled = true;
+          if (error) reject(error); else resolve(result);
+        }
+        try {
+          var result = Homey.emit(event, data, done);
+          if (result && typeof result.then === 'function') {
+            result.then(function(value) { done(null, value); }, done);
+          }
+        } catch (error) {
+          done(error);
+        }
+      });
+    }
+
+    function setText(id, key, fallback) {
+      document.getElementById(id).textContent = translate(key, fallback);
+    }
+
+    function setStatus(message, state, loading) {
+      var element = document.getElementById('status');
+      element.className = state || '';
+      element.textContent = '';
+      if (loading) {
+        var spinner = document.createElement('span');
+        spinner.className = 'spinner';
+        element.appendChild(spinner);
+      }
+      element.appendChild(document.createTextNode(message));
+    }
+
+    function applyTranslations() {
+      setText('title', 'pair.title', 'Midea LAN');
+      setText('subtitle', 'pair.subtitle', 'Connect your Midea air conditioner to Homey over the local network.');
+      setText('notice', 'pair.notice', 'SmartHome is used only during pairing to obtain the local V3 token and key. The password is not stored.');
+      setText('ip-label', 'pair.ip_label', 'Air conditioner IP address');
+      setText('ip-hint', 'pair.ip_hint', 'Recommended: reserve this address in your router. Leave it empty only to try network discovery.');
+      setText('smarthome-legend', 'pair.smarthome_legend', 'SmartHome account');
+      setText('account-label', 'pair.account_label', 'SmartHome e-mail or phone');
+      setText('password-label', 'pair.password_label', 'SmartHome password');
+      setText('login-hint', 'pair.login_hint', 'Required for most V3 Wi-Fi modules. The password is not stored after pairing.');
+      setText('advanced-label', 'pair.advanced_label', 'Advanced: use an existing V3 token and key');
+      setText('token-label', 'pair.token_label', 'V3 token');
+      setText('key-label', 'pair.key_label', 'V3 key');
+      setText('advanced-hint', 'pair.advanced_hint', 'Use this only when you already have both values backed up.');
+      setText('connect', 'pair.connect_button', 'Sign in to SmartHome and find the AC');
+      setStatus(translate('pair.ready', 'Enter the IP address and SmartHome credentials.'), '', false);
+      document.getElementById('ip').placeholder = translate('pair.ip_placeholder', '192.168.1.123');
+      document.getElementById('account').placeholder = translate('pair.account_placeholder', 'name@example.com');
+      document.getElementById('password').placeholder = translate('pair.password_placeholder', 'Password');
+      try {
+        Homey.setTitle(translate('pair.title', 'Midea LAN'));
+        Homey.setSubtitle(translate('pair.subtitle', 'Connect your Midea air conditioner to Homey over the local network.'));
+      } catch (error) {}
+    }
+
+    async function connect(event) {
+      event.preventDefault();
+      var button = document.getElementById('connect');
+      var payload = {
+        ip: document.getElementById('ip').value.trim(),
+        account: document.getElementById('account').value.trim(),
+        password: document.getElementById('password').value,
+        token: document.getElementById('token').value.trim(),
+        key: document.getElementById('key').value.trim()
+      };
+
+      if ((payload.account && !payload.password) || (!payload.account && payload.password)) {
+        setStatus(translate('pair.account_password_required', 'Enter both the SmartHome account and password.'), 'error', false);
+        return;
+      }
+      if ((payload.token && !payload.key) || (!payload.token && payload.key)) {
+        setStatus(translate('pair.token_key_required', 'Enter both the V3 token and key.'), 'error', false);
+        return;
+      }
+
+      button.disabled = true;
+      setStatus(translate('pair.connecting', 'Discovering the AC, signing in to SmartHome and verifying the LAN connection…'), '', true);
+      try {
+        await emitAsync('login', payload);
+        setStatus(translate('pair.found', 'Air conditioner found.'), 'success', false);
+        Homey.showView('list_devices');
+      } catch (error) {
+        var message = error && error.message ? error.message : String(error);
+        setStatus(message, 'error', false);
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    document.getElementById('pair-form').addEventListener('submit', connect);
+    applyTranslations();
+    Homey.ready();
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+Midea LAN for Homey v1.0.4 - Safe LAN Mode
+App ID: com.tothk.midea
+Developer: Krisztián Tóth
+Generated: 2026-09-06
+
+PURPOSE
+=======
+This release mitigates the Midea AC query-burst issue reported with newer
+midea-lan / Home Assistant integrations where status polling can wake the
+physical display, beep, show values such as 35/88, or reset the Wi-Fi module.
+The mitigation applies regardless of whether the AC is OFF or ON.
+
+SAFE MODE BEHAVIOUR
+===================
+PASS  Safe LAN mode is enabled by default.
+PASS  Existing v1.0.3 devices with no saved safe_mode value migrate to safe ON.
+PASS  AC-specific build_init_query() is suppressed in Safe Mode.
+PASS  AC-specific build_query() is suppressed in Safe Mode.
+PASS  Active refresh interval is forced to 0 in Safe Mode.
+PASS  Manual Refresh Flow sends zero AC status queries in Safe Mode.
+PASS  Base appliance handshake is retained so the message protocol is established.
+PASS  Encrypted TCP connection and heartbeat remain enabled.
+PASS  Normal Homey control commands remain enabled.
+PASS  Unsolicited/device-push status updates remain enabled.
+PASS  Initial availability callback no longer copies midea-lan constructor defaults
+      (power=False, target=24, etc.) over Homey's persisted device state.
+PASS  Energy is maintained by a local 60-second heartbeat with zero AC queries.
+PASS  Stale native realtime power is discarded after 120 seconds and falls back
+      to configured estimated power rather than presenting stale watts as live data.
+PASS  Unsafe active polling remains available only if Safe LAN mode is explicitly disabled.
+
+RELEASE CHECKS
+==============
+PASS  app.json parses and version is 1.0.4.
+PASS  midea-lan remains pinned at 2026.9.0; mitigation is local to this Homey app.
+PASS  certifi TLS configuration retained for SmartHome login.
+PASS  Homey Energy meter mapping retained (meter_power).
+PASS  No reserved Homey setting prefix is used.
+PASS  Python source compilation/static checks passed.
+PASS  Pairing defaults new devices to safe_mode=true.
+PASS  Existing EnergyTracker migration/continuity logic retained.
+PASS  Image dimensions validated by static_check.py.
+
+AUTOMATED TESTS
+===============
+27/27 unit/package tests passed before packaging.
+
+UPSTREAM CONTEXT
+================
+Home Assistant core issue #178457 reports AC power/display side effects including
+35/88 during background refresh. midea_ac_lan issues #899 and #963 report display
+wake-ups and Wi-Fi resets after the expanded AC query set. The upstream README
+also documents refresh_interval=0 as disabling active refresh and notes that most
+Midea devices still provide active status notifications.
+
+LIMITS
+======
+- Homey CLI validation cannot be run in this build environment and must be run on
+  the user's Mac with `homey app validate`.
+- No physical Midea AC or Homey Pro is connected to this build environment.
+- Safe Mode intentionally trades aggressive polling for appliance safety. A model
+  that does not emit unsolicited status updates may synchronize external changes
+  more slowly until it sends a notification or Homey sends a control command.

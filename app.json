@@ -1,0 +1,1330 @@
+{
+  "id": "com.tothk.midea",
+  "version": "1.0.4",
+  "compatibility": ">=13.2.1",
+  "sdk": 3,
+  "runtime": "python",
+  "pythonVersion": "3.14",
+  "pythonPackages": [
+    "midea-lan==2026.9.0",
+    "certifi==2025.8.3"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Midea LAN",
+    "sk": "Midea LAN"
+  },
+  "description": {
+    "en": "Local Midea air-conditioner control with SmartHome pairing and Homey Energy.",
+    "sk": "Lokálne ovládanie Midea klimatizácie so SmartHome párovaním a podporou Homey Energy."
+  },
+  "category": [
+    "climate"
+  ],
+  "tags": {
+    "en": [
+      "Midea",
+      "SmartHome",
+      "air conditioner",
+      "energy",
+      "LAN"
+    ],
+    "sk": [
+      "Midea",
+      "SmartHome",
+      "klimatizácia",
+      "energia",
+      "LAN"
+    ]
+  },
+  "brandColor": "#1677C8",
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Krisztián Tóth"
+  },
+  "capabilities": {
+    "midea_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Operating mode",
+        "sk": "Prevádzkový režim"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "picker",
+      "values": [
+        {
+          "id": "off",
+          "title": {
+            "en": "Off",
+            "sk": "Vypnuté"
+          }
+        },
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "sk": "Automaticky"
+          }
+        },
+        {
+          "id": "cool",
+          "title": {
+            "en": "Cool",
+            "sk": "Chladenie"
+          }
+        },
+        {
+          "id": "dry",
+          "title": {
+            "en": "Dry",
+            "sk": "Odvlhčovanie"
+          }
+        },
+        {
+          "id": "heat",
+          "title": {
+            "en": "Heat",
+            "sk": "Kúrenie"
+          }
+        },
+        {
+          "id": "fan_only",
+          "title": {
+            "en": "Fan only",
+            "sk": "Iba ventilátor"
+          }
+        }
+      ],
+      "icon": "/assets/capabilities/mode.svg"
+    },
+    "midea_fan_speed": {
+      "type": "enum",
+      "title": {
+        "en": "Fan speed",
+        "sk": "Rýchlosť ventilátora"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "picker",
+      "values": [
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "sk": "Automaticky"
+          }
+        },
+        {
+          "id": "silent",
+          "title": {
+            "en": "Silent",
+            "sk": "Tichý"
+          }
+        },
+        {
+          "id": "low",
+          "title": {
+            "en": "Low",
+            "sk": "Nízka"
+          }
+        },
+        {
+          "id": "medium",
+          "title": {
+            "en": "Medium",
+            "sk": "Stredná"
+          }
+        },
+        {
+          "id": "high",
+          "title": {
+            "en": "High",
+            "sk": "Vysoká"
+          }
+        },
+        {
+          "id": "full",
+          "title": {
+            "en": "Full",
+            "sk": "Maximum"
+          }
+        }
+      ],
+      "icon": "/assets/capabilities/fan.svg"
+    },
+    "midea_swing_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Swing",
+        "sk": "Natáčanie lamiel"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "picker",
+      "values": [
+        {
+          "id": "off",
+          "title": {
+            "en": "Off",
+            "sk": "Vypnuté"
+          }
+        },
+        {
+          "id": "vertical",
+          "title": {
+            "en": "Vertical",
+            "sk": "Vertikálne"
+          }
+        },
+        {
+          "id": "horizontal",
+          "title": {
+            "en": "Horizontal",
+            "sk": "Horizontálne"
+          }
+        },
+        {
+          "id": "both",
+          "title": {
+            "en": "Both",
+            "sk": "Oboje"
+          }
+        }
+      ],
+      "icon": "/assets/capabilities/swing.svg"
+    },
+    "midea_eco": {
+      "type": "boolean",
+      "title": {
+        "en": "Eco",
+        "sk": "Eco"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/leaf.svg"
+    },
+    "midea_turbo": {
+      "type": "boolean",
+      "title": {
+        "en": "Turbo",
+        "sk": "Turbo"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/turbo.svg"
+    },
+    "midea_sleep": {
+      "type": "boolean",
+      "title": {
+        "en": "Sleep",
+        "sk": "Spánok"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/moon.svg"
+    },
+    "midea_display": {
+      "type": "boolean",
+      "title": {
+        "en": "Display",
+        "sk": "Displej"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/display.svg"
+    },
+    "midea_frost_protect": {
+      "type": "boolean",
+      "title": {
+        "en": "8°C protection",
+        "sk": "Ochrana 8 °C"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/snowflake.svg"
+    },
+    "midea_breezeless": {
+      "type": "boolean",
+      "title": {
+        "en": "Breezeless",
+        "sk": "Bezprievanový režim"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/breeze.svg"
+    },
+    "midea_purifier": {
+      "type": "boolean",
+      "title": {
+        "en": "Ionizer",
+        "sk": "Ionizátor"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/ion.svg"
+    },
+    "midea_beep": {
+      "type": "boolean",
+      "title": {
+        "en": "Prompt tone",
+        "sk": "Zvuková odozva"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/bell.svg"
+    },
+    "midea_self_clean": {
+      "type": "boolean",
+      "title": {
+        "en": "Self clean",
+        "sk": "Samočistenie"
+      },
+      "getable": true,
+      "setable": true,
+      "insights": false,
+      "uiComponent": "toggle",
+      "icon": "/assets/capabilities/clean.svg"
+    },
+    "midea_energy_source": {
+      "type": "enum",
+      "title": {
+        "en": "Energy source",
+        "sk": "Zdroj merania energie"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": false,
+      "uiComponent": "sensor",
+      "values": [
+        {
+          "id": "native",
+          "title": {
+            "en": "Native meter",
+            "sk": "Meranie klimatizácie"
+          }
+        },
+        {
+          "id": "integrated",
+          "title": {
+            "en": "Integrated live power",
+            "sk": "Integrácia aktuálneho príkonu"
+          }
+        },
+        {
+          "id": "estimated",
+          "title": {
+            "en": "Estimated",
+            "sk": "Odhad"
+          }
+        },
+        {
+          "id": "unavailable",
+          "title": {
+            "en": "Unavailable",
+            "sk": "Nedostupné"
+          }
+        }
+      ],
+      "icon": "/assets/capabilities/energy.svg"
+    },
+    "midea_error_code": {
+      "type": "number",
+      "title": {
+        "en": "Error code",
+        "sk": "Chybový kód"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "uiComponent": "sensor",
+      "min": 0,
+      "max": 65535,
+      "decimals": 0,
+      "step": 1,
+      "icon": "/assets/capabilities/error.svg"
+    }
+  },
+  "flow": {
+    "triggers": [
+      {
+        "id": "midea_mode_changed",
+        "title": {
+          "en": "The operating mode changed",
+          "sk": "Zmenil sa režim klimatizácie"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "mode",
+            "type": "string",
+            "title": {
+              "en": "Mode",
+              "sk": "Režim"
+            }
+          }
+        ]
+      },
+      {
+        "id": "midea_energy_source_changed",
+        "title": {
+          "en": "The energy source changed",
+          "sk": "Zmenil sa zdroj merania energie"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "source",
+            "type": "string",
+            "title": {
+              "en": "Source",
+              "sk": "Zdroj"
+            }
+          }
+        ]
+      },
+      {
+        "id": "midea_error_occurred",
+        "title": {
+          "en": "The air conditioner reported an error",
+          "sk": "Klimatizácia nahlásila chybu"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "code",
+            "type": "number",
+            "title": {
+              "en": "Error code",
+              "sk": "Chybový kód"
+            }
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "midea_is_mode",
+        "title": {
+          "en": "The mode is !{{|not}} ...",
+          "sk": "Režim !{{je|nie je}} ..."
+        },
+        "titleFormatted": {
+          "en": "The mode is !{{|not}} [[mode]]",
+          "sk": "Režim !{{je|nie je}} [[mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "values": [
+              {
+                "id": "off",
+                "title": {
+                  "en": "Off",
+                  "sk": "Vypnuté"
+                }
+              },
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto",
+                  "sk": "Automaticky"
+                }
+              },
+              {
+                "id": "cool",
+                "title": {
+                  "en": "Cool",
+                  "sk": "Chladenie"
+                }
+              },
+              {
+                "id": "dry",
+                "title": {
+                  "en": "Dry",
+                  "sk": "Odvlhčovanie"
+                }
+              },
+              {
+                "id": "heat",
+                "title": {
+                  "en": "Heat",
+                  "sk": "Kúrenie"
+                }
+              },
+              {
+                "id": "fan_only",
+                "title": {
+                  "en": "Fan only",
+                  "sk": "Iba ventilátor"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "midea_energy_is_native",
+        "title": {
+          "en": "Native energy measurement !{{is|is not}} available",
+          "sk": "Natívne meranie energie !{{je|nie je}} dostupné"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "midea_set_mode",
+        "title": {
+          "en": "Set the operating mode",
+          "sk": "Nastaviť režim klimatizácie"
+        },
+        "titleFormatted": {
+          "en": "Set the mode to [[mode]]",
+          "sk": "Nastaviť režim na [[mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "values": [
+              {
+                "id": "off",
+                "title": {
+                  "en": "Off",
+                  "sk": "Vypnuté"
+                }
+              },
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto",
+                  "sk": "Automaticky"
+                }
+              },
+              {
+                "id": "cool",
+                "title": {
+                  "en": "Cool",
+                  "sk": "Chladenie"
+                }
+              },
+              {
+                "id": "dry",
+                "title": {
+                  "en": "Dry",
+                  "sk": "Odvlhčovanie"
+                }
+              },
+              {
+                "id": "heat",
+                "title": {
+                  "en": "Heat",
+                  "sk": "Kúrenie"
+                }
+              },
+              {
+                "id": "fan_only",
+                "title": {
+                  "en": "Fan only",
+                  "sk": "Iba ventilátor"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "midea_set_fan_speed",
+        "title": {
+          "en": "Set the fan speed",
+          "sk": "Nastaviť rýchlosť ventilátora"
+        },
+        "titleFormatted": {
+          "en": "Set fan speed to [[speed]]",
+          "sk": "Nastaviť ventilátor na [[speed]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          },
+          {
+            "type": "dropdown",
+            "name": "speed",
+            "values": [
+              {
+                "id": "auto",
+                "title": {
+                  "en": "Auto",
+                  "sk": "Automaticky"
+                }
+              },
+              {
+                "id": "silent",
+                "title": {
+                  "en": "Silent",
+                  "sk": "Tichý"
+                }
+              },
+              {
+                "id": "low",
+                "title": {
+                  "en": "Low",
+                  "sk": "Nízka"
+                }
+              },
+              {
+                "id": "medium",
+                "title": {
+                  "en": "Medium",
+                  "sk": "Stredná"
+                }
+              },
+              {
+                "id": "high",
+                "title": {
+                  "en": "High",
+                  "sk": "Vysoká"
+                }
+              },
+              {
+                "id": "full",
+                "title": {
+                  "en": "Full",
+                  "sk": "Maximum"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "midea_set_swing",
+        "title": {
+          "en": "Set the swing mode",
+          "sk": "Nastaviť natáčanie lamiel"
+        },
+        "titleFormatted": {
+          "en": "Set swing to [[swing]]",
+          "sk": "Nastaviť natáčanie na [[swing]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          },
+          {
+            "type": "dropdown",
+            "name": "swing",
+            "values": [
+              {
+                "id": "off",
+                "title": {
+                  "en": "Off",
+                  "sk": "Vypnuté"
+                }
+              },
+              {
+                "id": "vertical",
+                "title": {
+                  "en": "Vertical",
+                  "sk": "Vertikálne"
+                }
+              },
+              {
+                "id": "horizontal",
+                "title": {
+                  "en": "Horizontal",
+                  "sk": "Horizontálne"
+                }
+              },
+              {
+                "id": "both",
+                "title": {
+                  "en": "Both",
+                  "sk": "Oboje"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "midea_set_eco",
+        "title": {
+          "en": "Set Eco mode",
+          "sk": "Nastaviť Eco režim"
+        },
+        "titleFormatted": {
+          "en": "Turn Eco mode [[enabled]]",
+          "sk": "Nastaviť Eco režim: [[enabled]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          },
+          {
+            "type": "dropdown",
+            "name": "enabled",
+            "values": [
+              {
+                "id": "on",
+                "title": {
+                  "en": "On",
+                  "sk": "Zapnúť"
+                }
+              },
+              {
+                "id": "off",
+                "title": {
+                  "en": "Off",
+                  "sk": "Vypnúť"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "midea_set_turbo",
+        "title": {
+          "en": "Set Turbo mode",
+          "sk": "Nastaviť Turbo režim"
+        },
+        "titleFormatted": {
+          "en": "Turn Turbo mode [[enabled]]",
+          "sk": "Nastaviť Turbo režim: [[enabled]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          },
+          {
+            "type": "dropdown",
+            "name": "enabled",
+            "values": [
+              {
+                "id": "on",
+                "title": {
+                  "en": "On",
+                  "sk": "Zapnúť"
+                }
+              },
+              {
+                "id": "off",
+                "title": {
+                  "en": "Off",
+                  "sk": "Vypnúť"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "midea_boost_cool",
+        "title": {
+          "en": "Boost cooling",
+          "sk": "Spustiť maximálne chladenie"
+        },
+        "hint": {
+          "en": "Turns on Cool mode, sets 16°C, full fan and Turbo.",
+          "sk": "Zapne chladenie, nastaví 16 °C, maximálny ventilátor a Turbo."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ]
+      },
+      {
+        "id": "midea_refresh_now",
+        "title": {
+          "en": "Refresh the air conditioner now",
+          "sk": "Obnoviť stav klimatizácie teraz"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ]
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "id": "ac",
+      "name": {
+        "en": "Midea Air Conditioner",
+        "sk": "Midea klimatizácia"
+      },
+      "class": "thermostat",
+      "capabilities": [
+        "onoff",
+        "target_temperature",
+        "measure_temperature",
+        "measure_temperature.outdoor",
+        "measure_humidity",
+        "midea_mode",
+        "midea_fan_speed",
+        "midea_swing_mode",
+        "measure_power",
+        "meter_power",
+        "midea_energy_source",
+        "midea_eco",
+        "midea_turbo",
+        "midea_sleep",
+        "midea_display",
+        "midea_frost_protect",
+        "midea_breezeless",
+        "midea_purifier",
+        "midea_beep",
+        "midea_self_clean",
+        "alarm_generic",
+        "midea_error_code"
+      ],
+      "capabilitiesOptions": {
+        "target_temperature": {
+          "min": 16,
+          "max": 30,
+          "step": 0.5,
+          "units": {
+            "en": "°C",
+            "sk": "°C"
+          }
+        },
+        "measure_temperature": {
+          "title": {
+            "en": "Indoor temperature",
+            "sk": "Vnútorná teplota"
+          }
+        },
+        "measure_temperature.outdoor": {
+          "title": {
+            "en": "Outdoor temperature",
+            "sk": "Vonkajšia teplota"
+          }
+        },
+        "measure_humidity": {
+          "title": {
+            "en": "Indoor humidity",
+            "sk": "Vnútorná vlhkosť"
+          }
+        },
+        "measure_power": {
+          "title": {
+            "en": "Current power",
+            "sk": "Aktuálny príkon"
+          },
+          "approximated": false
+        },
+        "meter_power": {
+          "title": {
+            "en": "Energy consumption",
+            "sk": "Spotreba energie"
+          }
+        },
+        "alarm_generic": {
+          "title": {
+            "en": "AC error",
+            "sk": "Chyba klimatizácie"
+          }
+        }
+      },
+      "connectivity": [
+        "lan",
+        "cloud"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "images": {
+        "small": "/drivers/ac/assets/images/small.png",
+        "large": "/drivers/ac/assets/images/large.png",
+        "xlarge": "/drivers/ac/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "start"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "options": {
+            "singular": false
+          },
+          "navigation": {
+            "prev": "start",
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "repair"
+        }
+      ],
+      "settings": [
+        {
+          "id": "ip",
+          "type": "text",
+          "label": {
+            "en": "IP address",
+            "sk": "IP adresa"
+          },
+          "value": "",
+          "highlight": true,
+          "hint": {
+            "en": "Reserve this address in your router.",
+            "sk": "Rezervujte túto adresu v routeri."
+          }
+        },
+        {
+          "id": "port",
+          "type": "number",
+          "label": {
+            "en": "LAN port",
+            "sk": "LAN port"
+          },
+          "value": 6444,
+          "min": 1,
+          "max": 65535
+        },
+        {
+          "id": "safe_mode",
+          "type": "checkbox",
+          "label": {
+            "en": "Safe LAN mode (recommended)",
+            "sk": "Bezpečný LAN režim (odporúčané)"
+          },
+          "value": true,
+          "highlight": true,
+          "hint": {
+            "en": "Disables all periodic AC status queries and one-time capability/status probes. Homey keeps only the TCP heartbeat and listens for device push updates. This avoids the known Midea 35/88 display wake, beeping and Wi-Fi-reset issue. Applies while the AC is OFF and ON.",
+            "sk": "Vypne všetky periodické stavové dotazy aj jednorazové capability/status dotazy. Homey ponechá iba TCP heartbeat a počúva aktívne hlásenia klimatizácie. Tým sa obchádza známy problém Midea s 35/88, pípaním, rozsvecovaním displeja a resetmi Wi-Fi. Platí pri vypnutej aj zapnutej klíme."
+          }
+        },
+        {
+          "id": "poll_interval",
+          "type": "number",
+          "label": {
+            "en": "Active refresh interval (unsafe mode only)",
+            "sk": "Aktívny refresh interval (iba unsafe režim)"
+          },
+          "value": 30,
+          "min": 15,
+          "max": 600,
+          "step": 5,
+          "units": {
+            "en": "s",
+            "sk": "s"
+          },
+          "hint": {
+            "en": "Ignored while Safe LAN mode is enabled. Disabling Safe LAN mode allows midea-lan to actively query the AC, which can trigger display/beep/Wi-Fi issues on affected models.",
+            "sk": "V Bezpečnom LAN režime sa ignoruje. Po vypnutí bezpečného režimu môže midea-lan aktívne dotazovať klímu; na niektorých modeloch to môže vyvolať pípanie, rozsvietenie displeja alebo reset Wi-Fi."
+          }
+        },
+        {
+          "id": "device_id",
+          "type": "label",
+          "label": {
+            "en": "Device ID",
+            "sk": "ID zariadenia"
+          },
+          "value": ""
+        },
+        {
+          "id": "protocol",
+          "type": "label",
+          "label": {
+            "en": "Protocol",
+            "sk": "Protokol"
+          },
+          "value": ""
+        },
+        {
+          "id": "model",
+          "type": "label",
+          "label": {
+            "en": "Model",
+            "sk": "Model"
+          },
+          "value": ""
+        },
+        {
+          "id": "serial_number",
+          "type": "label",
+          "label": {
+            "en": "Serial number",
+            "sk": "Sériové číslo"
+          },
+          "value": ""
+        },
+        {
+          "id": "mac",
+          "type": "label",
+          "label": {
+            "en": "MAC address",
+            "sk": "MAC adresa"
+          },
+          "value": ""
+        },
+        {
+          "id": "subtype",
+          "type": "number",
+          "label": {
+            "en": "Subtype",
+            "sk": "Podtyp"
+          },
+          "value": 0,
+          "min": 0,
+          "max": 999999999
+        },
+        {
+          "id": "token",
+          "type": "password",
+          "label": {
+            "en": "V3 token",
+            "sk": "V3 token"
+          },
+          "value": "",
+          "hint": {
+            "en": "Needed only for protocol V3. Retrieved during pairing when possible. Keep a backup.",
+            "sk": "Potrebný iba pre protokol V3. Pri párovaní sa získa automaticky. Uložte si zálohu."
+          }
+        },
+        {
+          "id": "key",
+          "type": "password",
+          "label": {
+            "en": "V3 key",
+            "sk": "V3 kľúč"
+          },
+          "value": "",
+          "hint": {
+            "en": "Needed only for protocol V3. Keep a backup.",
+            "sk": "Potrebný iba pre protokol V3. Uložte si zálohu."
+          }
+        },
+        {
+          "id": "power_analysis_method",
+          "type": "dropdown",
+          "label": {
+            "en": "Native power decoding method",
+            "sk": "Metóda dekódovania spotreby"
+          },
+          "value": "auto",
+          "highlight": true,
+          "values": [
+            {
+              "id": "auto",
+              "label": {
+                "en": "Automatic — known model profile, otherwise method 1",
+                "sk": "Automaticky — profil známeho modelu, inak metóda 1"
+              }
+            },
+            {
+              "id": "1",
+              "label": {
+                "en": "1 — Binary (default)",
+                "sk": "1 — Binárna (predvolená)"
+              }
+            },
+            {
+              "id": "2",
+              "label": {
+                "en": "2 — BCD",
+                "sk": "2 — BCD"
+              }
+            },
+            {
+              "id": "3",
+              "label": {
+                "en": "3 — Base 100",
+                "sk": "3 — Základ 100"
+              }
+            },
+            {
+              "id": "12",
+              "label": {
+                "en": "12 — BCD ÷ 10",
+                "sk": "12 — BCD ÷ 10"
+              }
+            },
+            {
+              "id": "101",
+              "label": {
+                "en": "101 — BCD energy + binary power",
+                "sk": "101 — BCD energia + binárny príkon"
+              }
+            }
+          ],
+          "hint": {
+            "en": "Automatic selects 12 for PortaSplit and 101 for model 00000Q1D subtype 524. Choose a numbered method only when W/kWh values are wrong.",
+            "sk": "Automatika zvolí 12 pre PortaSplit a 101 pre model 00000Q1D subtype 524. Číselnú metódu zvoľte iba pri nesprávnych W/kWh údajoch."
+          }
+        },
+        {
+          "id": "customize",
+          "type": "textarea",
+          "label": {
+            "en": "Additional midea-lan JSON",
+            "sk": "Dodatočné nastavenie midea-lan JSON"
+          },
+          "value": "",
+          "hint": {
+            "en": "Optional advanced parameters. The power method above is merged automatically.",
+            "sk": "Voliteľné pokročilé parametre. Metóda spotreby vyššie sa doplní automaticky."
+          }
+        },
+        {
+          "id": "consumption_mode",
+          "type": "dropdown",
+          "label": {
+            "en": "Energy calculation source",
+            "sk": "Zdroj výpočtu spotreby"
+          },
+          "value": "auto",
+          "highlight": true,
+          "values": [
+            {
+              "id": "auto",
+              "label": {
+                "en": "Automatic: live power → native gap recovery → estimate",
+                "sk": "Automaticky: aktuálny príkon → obnova z merača → odhad"
+              }
+            },
+            {
+              "id": "native",
+              "label": {
+                "en": "Native cumulative meter only",
+                "sk": "Iba natívny elektromer"
+              }
+            },
+            {
+              "id": "realtime",
+              "label": {
+                "en": "Integrate native live power",
+                "sk": "Integrovať natívny aktuálny príkon"
+              }
+            },
+            {
+              "id": "estimate",
+              "label": {
+                "en": "Always estimate",
+                "sk": "Vždy odhadovať"
+              }
+            }
+          ],
+          "hint": {
+            "en": "Recommended. Homey integrates live power during normal operation and uses native counters only to recover missing periods or when live power is unavailable.",
+            "sk": "Odporúčané. Homey počas bežnej prevádzky integruje aktuálny príkon a natívne počítadlá používa iba na obnovu chýbajúcich období alebo keď príkon nie je dostupný."
+          }
+        },
+        {
+          "id": "power_calibration_percent",
+          "type": "number",
+          "label": {
+            "en": "Live power calibration",
+            "sk": "Kalibrácia aktuálneho príkonu"
+          },
+          "value": 100,
+          "min": 25,
+          "max": 400,
+          "step": 1,
+          "units": {
+            "en": "%",
+            "sk": "%"
+          },
+          "hint": {
+            "en": "Normally leave at 100%. Adjust only after comparing a complete day with an external meter or SmartHome report.",
+            "sk": "Bežne ponechajte 100 %. Upravte iba po porovnaní celého dňa s externým meračom alebo reportom SmartHome."
+          }
+        },
+        {
+          "id": "cooling_power_w",
+          "type": "number",
+          "label": {
+            "en": "Rated cooling input",
+            "sk": "Menovitý príkon chladenia"
+          },
+          "value": 1000,
+          "min": 50,
+          "max": 10000,
+          "step": 10,
+          "units": {
+            "en": "W",
+            "sk": "W"
+          },
+          "hint": {
+            "en": "Use input power from the AC nameplate for a better fallback estimate.",
+            "sk": "Pre presnejší odhad použite príkon zo štítku klimatizácie."
+          }
+        },
+        {
+          "id": "heating_power_w",
+          "type": "number",
+          "label": {
+            "en": "Rated heating input",
+            "sk": "Menovitý príkon kúrenia"
+          },
+          "value": 1100,
+          "min": 50,
+          "max": 10000,
+          "step": 10,
+          "units": {
+            "en": "W",
+            "sk": "W"
+          }
+        },
+        {
+          "id": "dry_power_w",
+          "type": "number",
+          "label": {
+            "en": "Rated dry-mode input",
+            "sk": "Príkon odvlhčovania"
+          },
+          "value": 700,
+          "min": 20,
+          "max": 10000,
+          "step": 10,
+          "units": {
+            "en": "W",
+            "sk": "W"
+          }
+        },
+        {
+          "id": "fan_power_w",
+          "type": "number",
+          "label": {
+            "en": "Indoor fan input",
+            "sk": "Príkon vnútorného ventilátora"
+          },
+          "value": 50,
+          "min": 1,
+          "max": 1000,
+          "step": 1,
+          "units": {
+            "en": "W",
+            "sk": "W"
+          }
+        },
+        {
+          "id": "standby_power_w",
+          "type": "number",
+          "label": {
+            "en": "Standby input",
+            "sk": "Príkon v pohotovosti"
+          },
+          "value": 2,
+          "min": 0,
+          "max": 100,
+          "step": 0.5,
+          "units": {
+            "en": "W",
+            "sk": "W"
+          }
+        },
+        {
+          "id": "estimated_load_factor",
+          "type": "number",
+          "label": {
+            "en": "Estimated compressor load",
+            "sk": "Odhadované zaťaženie kompresora"
+          },
+          "value": 65,
+          "min": 10,
+          "max": 100,
+          "step": 5,
+          "units": {
+            "en": "%",
+            "sk": "%"
+          },
+          "hint": {
+            "en": "Used only for fallback estimation. Turbo is calculated at 100%.",
+            "sk": "Používa sa iba pri odhade. Turbo sa počíta ako 100 %."
+          }
+        }
+      ],
+      "energy": {
+        "meterPowerImportedCapability": "meter_power"
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+.homeybuild/
+.git/
+__pycache__/
+*.pyc
+.pytest_cache/
+tests/
+tools/
+VALIDATION_REPORT.txt
+*.zip
+*.sha256

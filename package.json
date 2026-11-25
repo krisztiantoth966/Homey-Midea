@@ -1,0 +1,13 @@
+{
+  "name": "com.tothk.midea",
+  "version": "1.0.3",
+  "private": true,
+  "description": "Midea LAN air-conditioner app for Homey with SmartHome pairing and Homey Energy",
+  "license": "MIT",
+  "scripts": {
+    "check:syntax": "python3 -m compileall -q app.py drivers lib tests tools",
+    "check:static": "python3 tools/static_check.py",
+    "test": "PYTHONPATH=. python3 -m unittest discover -s tests -v",
+    "validate": "npm run check:syntax && npm run check:static && npm test"
+  }
+}

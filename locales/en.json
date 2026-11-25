@@ -1,0 +1,34 @@
+{
+  "pair": {
+    "title": "Midea LAN",
+    "subtitle": "Connect your Midea air conditioner to Homey over the local network.",
+    "notice": "SmartHome is used only during pairing to obtain the local V3 token and key. The password is not stored. Reserve the AC IP address in your router.",
+    "ip_label": "Air conditioner IP address",
+    "ip_hint": "Recommended: reserve this address in your router. Leave it empty only to try network discovery.",
+    "account_label": "SmartHome email or phone",
+    "password_label": "SmartHome password",
+    "login_hint": "Required for most V3 Wi-Fi modules. The password is not stored after pairing.",
+    "advanced_label": "Advanced: use an existing V3 token and key",
+    "advanced_hint": "Use this only when you already have both values backed up.",
+    "connect_button": "Sign in to SmartHome and find the AC",
+    "connecting": "Discovering the AC, signing in to SmartHome and verifying the LAN connection…",
+    "found": "Air conditioner found.",
+    "ready": "Enter the IP address and SmartHome credentials.",
+    "smarthome_legend": "SmartHome account",
+    "token_label": "V3 token",
+    "key_label": "V3 key",
+    "ip_placeholder": "192.168.1.123",
+    "account_placeholder": "name@example.com",
+    "password_placeholder": "Password",
+    "account_password_required": "Enter both the SmartHome account and password.",
+    "token_key_required": "Enter both the V3 token and key."
+  },
+  "repair": {
+    "title": "Repair Midea connection",
+    "intro": "Update the local IP address and, for V3, obtain a fresh token/key from SmartHome.",
+    "hint": "Leave SmartHome fields empty when the existing token/key is still valid.",
+    "save": "Repair connection",
+    "working": "Checking the air conditioner…",
+    "done": "Connection repaired."
+  }
+}

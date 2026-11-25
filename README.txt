@@ -1,0 +1,1 @@
+Control Midea-family air conditioners directly over the local network. SmartHome is used only during V3 pairing to obtain the LAN token and key. Homey Energy uses a monotonic hybrid meter that integrates live power during normal operation and uses native Midea counters to recover gaps.

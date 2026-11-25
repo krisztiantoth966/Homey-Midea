@@ -1,0 +1,34 @@
+{
+  "pair": {
+    "title": "Midea LAN",
+    "subtitle": "Pripojte Midea klimatizáciu k Homey cez lokálnu sieť.",
+    "notice": "SmartHome sa použije iba počas párovania na získanie lokálneho V3 tokenu a kľúča. Heslo sa neukladá. IP adresu klimatizácie rezervujte v routeri.",
+    "ip_label": "IP adresa klimatizácie",
+    "ip_hint": "Odporúčané: rezervujte túto adresu v routeri. Prázdne pole použite iba na pokus o automatické vyhľadanie.",
+    "account_label": "SmartHome e-mail alebo telefón",
+    "password_label": "SmartHome heslo",
+    "login_hint": "Potrebné pre väčšinu V3 Wi-Fi modulov. Heslo sa po párovaní neukladá.",
+    "advanced_label": "Pokročilé: použiť existujúci V3 token a kľúč",
+    "advanced_hint": "Použite iba vtedy, keď už máte obe hodnoty zálohované.",
+    "connect_button": "Prihlásiť sa do SmartHome a nájsť klimatizáciu",
+    "connecting": "Vyhľadávam klimatizáciu, prihlasujem sa do SmartHome a overujem LAN pripojenie…",
+    "found": "Klimatizácia bola nájdená.",
+    "ready": "Zadajte IP adresu klimatizácie a prihlasovacie údaje SmartHome.",
+    "smarthome_legend": "Účet SmartHome",
+    "token_label": "V3 token",
+    "key_label": "V3 kľúč",
+    "ip_placeholder": "192.168.1.123",
+    "account_placeholder": "meno@example.com",
+    "password_placeholder": "Heslo",
+    "account_password_required": "Zadajte účet SmartHome aj heslo.",
+    "token_key_required": "Zadajte V3 token aj V3 kľúč."
+  },
+  "repair": {
+    "title": "Oprava Midea pripojenia",
+    "intro": "Aktualizujte lokálnu IP adresu a pri V3 získajte nový token/kľúč zo SmartHome.",
+    "hint": "SmartHome polia nechajte prázdne, ak existujúci token a kľúč stále fungujú.",
+    "save": "Opraviť pripojenie",
+    "working": "Kontrolujem klimatizáciu…",
+    "done": "Pripojenie bolo opravené."
+  }
+}
