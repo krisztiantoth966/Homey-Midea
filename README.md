@@ -13,13 +13,31 @@ Native Homey Pro application for local control of Midea-family air conditioners.
 
 ## Pairing
 
-1. Give the AC a DHCP reservation/static IP in the router.
-2. Add **Midea LAN → Midea Air Conditioner** in Homey.
-3. Enter the AC IP address.
-4. Enter the same SmartHome e-mail/phone and password that work in the SmartHome mobile application.
-5. For V3 devices, the app retrieves and verifies a LAN token/key. The SmartHome password is not stored after pairing; only the LAN connection details are stored.
+1. Add **Midea LAN → Midea Air Conditioner** in Homey.
+2. Homey searches the local network (UDP broadcast) and lists every Midea air conditioner it finds.
+3. Select one and press **Add air conditioner**.
 
-A manually backed-up V3 token and key can be entered under **Advanced** instead of using SmartHome credentials.
+- Air conditioners Homey already knows (V3 key of a paired device) and V1/V2 devices are added **fully locally**.
+- A new V3 air conditioner needs the SmartHome account **once** to fetch its local token/key; the password is not stored.
+- Not in the list? Use **Add by IP address**, optionally with a backed-up V3 token and key.
+
+If the AC later gets another IP address, Homey finds it again automatically.
+
+## Status updates
+
+Setting **Status updates**:
+
+- **Light** (default) – every 15 s Homey asks the AC only for its state and power. Changes made with the
+  remote control, the filter reminder and live power reach Homey. Capability probes and the extra query
+  groups that are linked to the 35/88 display / beep / Wi-Fi reset reports are not sent.
+- **Push only** – no queries at all (the Safe Mode of 1.0.x); only the AC's own notifications.
+- **Full** – every query of `midea-lan`.
+
+## Filter and error warnings
+
+When the AC reports a dirty dust filter, **Filter needs cleaning** turns on and the device shows a warning.
+Error codes are shown as a device warning too. Flow cards: *The filter needs cleaning*,
+*The filter reminder was cleared*, *Filter needs / does not need cleaning*.
 
 ## Homey Energy
 
@@ -28,7 +46,7 @@ The driver exposes:
 - `measure_power` — current consumption in watts,
 - `meter_power` — a cumulative, never-decreasing counter in kWh.
 
-Version 1.0.4 uses a new hybrid tracker:
+The app uses a hybrid tracker:
 
 1. During normal online operation, Homey integrates the AC's live `realtime_power` value.
 2. Native total/session counters are tracked in parallel and recover longer gaps or periods without usable live power.

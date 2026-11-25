@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from homey.driver import Driver
+
+from midealan.const import DeviceType, ProtocolVersion
+from midealan.discover import discover
 
 from app.lib.pairing import PairingError, prepare_pairing_devices
 
@@ -114,6 +118,36 @@ class MideaACDriver(Driver):
                 raise PairingError("No air conditioner is ready to add. Go back and run discovery again.")
             return [device.as_homey_device() for device in found_devices]
 
+        async def discover_devices(data: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+            """Broadcast search on the LAN; no cloud involved."""
+            try:
+                found = await asyncio.to_thread(lambda: discover([int(DeviceType.AC)]))
+            except Exception as exc:
+                self.error(f"Discovery failed: {type(exc).__name__}: {exc}")
+                found = {}
+            known = self._known_keys()
+            paired: set[int] = set()
+            for device in self.get_devices():
+                try:
+                    paired.add(int(str(device.get_setting("device_id") or "0")))
+                except ValueError:
+                    pass
+            result = []
+            for device_id, info in sorted((found or {}).items()):
+                device_id = int(device_id)
+                protocol = int(info.get("protocol") or 3)
+                result.append({
+                    "device_id": str(device_id),
+                    "ip": str(info.get("ip_address") or ""),
+                    "model": str(info.get("model") or ""),
+                    "protocol": protocol,
+                    "needs_login": protocol == int(ProtocolVersion.V3) and device_id not in known,
+                    "paired": device_id in paired,
+                })
+            self.log(f"Discovery found {len(result)} air conditioner(s)")
+            return result
+
+        session.set_handler("discover", discover_devices)
         session.set_handler("login", login)
         session.set_handler("list_devices", list_devices)
 

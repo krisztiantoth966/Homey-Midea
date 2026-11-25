@@ -8,3 +8,4 @@ tools/
 VALIDATION_REPORT.txt
 *.zip
 *.sha256
+design/

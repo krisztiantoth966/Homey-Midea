@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
+  <!-- wall-mounted split unit -->
+  <path d="M190 230 H770 A90 90 0 0 1 860 320 V450 A70 70 0 0 1 790 520 H170 A70 70 0 0 1 100 450 V320 A90 90 0 0 1 190 230 Z" fill="none" stroke="#000" stroke-width="56" stroke-linejoin="round"/>
+  <line x1="210" y1="430" x2="750" y2="430" stroke="#000" stroke-width="44" stroke-linecap="round"/>
+  <circle cx="735" cy="330" r="30" fill="#000"/>
+  <!-- airflow -->
+  <path d="M290 610 C250 670 330 700 290 770" fill="none" stroke="#000" stroke-width="48" stroke-linecap="round"/>
+  <path d="M480 610 C440 670 520 700 480 770" fill="none" stroke="#000" stroke-width="48" stroke-linecap="round"/>
+  <path d="M670 610 C630 670 710 700 670 770" fill="none" stroke="#000" stroke-width="48" stroke-linecap="round"/>
+</svg>

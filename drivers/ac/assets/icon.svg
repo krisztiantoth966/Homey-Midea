@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="14" width="48" height="28" rx="4"/><path d="M15 23h34M17 34c5 6 11 6 16 0m2 0c4 5 9 5 13 0M20 50h24"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960">
+  <path d="M190 200 H770 A90 90 0 0 1 860 290 V420 A70 70 0 0 1 790 490 H170 A70 70 0 0 1 100 420 V290 A90 90 0 0 1 190 200 Z" fill="none" stroke="#000" stroke-width="56" stroke-linejoin="round"/>
+  <line x1="210" y1="400" x2="750" y2="400" stroke="#000" stroke-width="44" stroke-linecap="round"/>
+  <!-- snowflake -->
+  <g stroke="#000" stroke-width="44" stroke-linecap="round" fill="none">
+    <line x1="480" y1="580" x2="480" y2="840"/>
+    <line x1="367" y1="645" x2="593" y2="775"/>
+    <line x1="367" y1="775" x2="593" y2="645"/>
+    <path d="M440 600 L480 640 L520 600"/><path d="M440 820 L480 780 L520 820"/>
+  </g>
+</svg>

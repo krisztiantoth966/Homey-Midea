@@ -5,161 +5,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      --accent: #1677c8;
-      --accent-dark: #0b5fa5;
-      --soft: #eef7ff;
-      --border: #d6e2ec;
-      --text: #17202a;
-      --muted: #657586;
-      --error: #b42318;
-      --success: #067647;
+      --a1: #0ea5e9;
+      --a2: #2563eb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --soft: #f1f5f9;
+      --ok: #16a34a;
+      --warn: #d97706;
+      --err: #dc2626;
       color-scheme: light dark;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 18px 16px 28px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background: transparent;
-    }
-    .hero {
-      width: 82px;
-      height: 82px;
-      border-radius: 24px;
-      margin: 0 auto 14px;
-      background: linear-gradient(145deg, #1a8fe3, var(--accent-dark));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 14px 28px rgba(22, 119, 200, .22);
-    }
-    .hero svg { width: 54px; height: 54px; stroke: white; fill: none; stroke-width: 2; }
-    h1 { font-size: 25px; text-align: center; margin: 0 0 7px; line-height: 1.2; }
-    .subtitle { text-align: center; color: var(--muted); margin: 0 0 17px; line-height: 1.45; font-size: 14px; }
-    .notice {
-      background: var(--soft);
-      border: 1px solid #c8e2f7;
-      border-radius: 12px;
-      padding: 12px 13px;
-      color: #24516f;
-      font-size: 13px;
-      line-height: 1.45;
-      margin-bottom: 16px;
-    }
-    fieldset {
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      margin: 15px 0 0;
-      padding: 5px 13px 14px;
-    }
-    legend { padding: 0 7px; font-size: 13px; font-weight: 700; }
-    label { display: block; font-size: 13px; font-weight: 700; margin: 13px 0 6px; }
-    input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 16px;
-      color: var(--text);
-      background: transparent;
-      outline: none;
-    }
-    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22, 119, 200, .12); }
-    .hint { color: var(--muted); font-size: 12px; line-height: 1.4; margin-top: 5px; }
-    details { margin-top: 15px; border: 1px solid var(--border); border-radius: 12px; padding: 11px 13px; }
-    summary { cursor: pointer; font-weight: 700; font-size: 13px; }
-    .action-button {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-top: 18px;
-      background: linear-gradient(135deg, #227cf4, #45b8ef);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 750;
-      cursor: pointer;
-      min-height: 50px;
-    }
-    .action-button:disabled { opacity: .6; cursor: default; }
-    #status { min-height: 22px; margin-top: 12px; color: var(--muted); text-align: center; font-size: 13px; line-height: 1.4; }
-    #status.error { color: var(--error); }
-    #status.success { color: var(--success); }
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(22, 119, 200, .2);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      display: inline-block;
-      vertical-align: -3px;
-      margin-inline-end: 7px;
-      animation: spin .8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
     @media (prefers-color-scheme: dark) {
-      :root { --text: #f4f6f8; --muted: #aeb8c2; --border: #414955; --soft: #142c3f; }
-      .notice { color: #cce9ff; border-color: #285b7f; }
-      input { background: rgba(255,255,255,.03); }
+      :root { --text: #f1f5f9; --muted: #94a3b8; --card: #111827; --line: #1f2937; --soft: #0b1220; }
     }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 18px 16px 28px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--text); background: transparent; }
+
+    .hero { text-align: center; margin-bottom: 18px; }
+    .radar { position: relative; width: 96px; height: 96px; margin: 0 auto 14px; }
+    .radar .core { position: absolute; inset: 14px; border-radius: 26px; background: linear-gradient(135deg, var(--a1), var(--a2)); display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 28px rgba(37, 99, 235, .3); }
+    .radar .core svg { width: 44px; height: 44px; }
+    .radar .ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--a1); opacity: 0; }
+    .searching .radar .ring { animation: ping 1.8s ease-out infinite; }
+    .searching .radar .ring:nth-child(2) { animation-delay: .6s; }
+    @keyframes ping { 0% { transform: scale(.6); opacity: .7; } 100% { transform: scale(1.35); opacity: 0; } }
+    h1 { font-size: 23px; margin: 0 0 6px; }
+    .sub { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 0; }
+
+    .list { display: grid; gap: 10px; margin-top: 6px; }
+    .ac { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 16px; background: var(--card); border: 1.5px solid var(--line); cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s; }
+    .ac:active { transform: scale(.99); }
+    .ac.sel { border-color: var(--a2); box-shadow: 0 0 0 4px rgba(37, 99, 235, .14); }
+    .ac.dim { opacity: .55; }
+    .ac .ico { flex: 0 0 44px; height: 44px; border-radius: 13px; background: linear-gradient(135deg, var(--a1), var(--a2)); display: flex; align-items: center; justify-content: center; }
+    .ac .ico svg { width: 28px; height: 28px; }
+    .ac .txt { flex: 1; min-width: 0; }
+    .ac .name { font-weight: 650; font-size: 15px; }
+    .ac .meta { color: var(--muted); font-size: 12.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .badge { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 999px; margin-top: 6px; }
+    .b-ok { background: rgba(22, 163, 74, .12); color: var(--ok); }
+    .b-warn { background: rgba(217, 119, 6, .12); color: var(--warn); }
+    .b-info { background: var(--soft); color: var(--muted); }
+    .check { flex: 0 0 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); }
+    .ac.sel .check { border-color: var(--a2); background: var(--a2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12l4 4 8-8' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat; }
+
+    .empty { text-align: center; color: var(--muted); font-size: 14px; line-height: 1.5; padding: 18px 8px; border: 1.5px dashed var(--line); border-radius: 16px; }
+
+    .panel { margin-top: 14px; padding: 4px 14px 14px; border-radius: 16px; background: var(--card); border: 1.5px solid var(--line); }
+    .panel h2 { font-size: 14px; margin: 12px 0 2px; }
+    .panel p { color: var(--muted); font-size: 12.5px; line-height: 1.45; margin: 4px 0 0; }
+    label { display: block; font-size: 12.5px; font-weight: 650; margin: 12px 0 5px; }
+    input { width: 100%; border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 12px; font-size: 16px; color: var(--text); background: transparent; outline: none; }
+    input:focus { border-color: var(--a2); box-shadow: 0 0 0 3px rgba(37, 99, 235, .14); }
+    details { margin-top: 12px; }
+    summary { cursor: pointer; font-size: 13px; font-weight: 650; color: var(--muted); padding: 6px 2px; }
+
+    .row { display: flex; gap: 10px; margin-top: 16px; }
+    .btn { appearance: none; -webkit-appearance: none; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 16px; font-weight: 700; cursor: pointer; min-height: 50px; }
+    .btn-primary { flex: 1; color: #fff; background: linear-gradient(135deg, var(--a1), var(--a2)); box-shadow: 0 8px 20px rgba(37, 99, 235, .25); }
+    .btn-ghost { background: var(--soft); color: var(--text); }
+    .btn:disabled { opacity: .55; cursor: default; box-shadow: none; }
+    #status { min-height: 20px; margin-top: 12px; text-align: center; font-size: 13px; line-height: 1.45; color: var(--muted); }
+    #status.error { color: var(--err); }
+    #status.success { color: var(--ok); }
+    .hidden { display: none; }
   </style>
 </head>
-<body>
-  <div class="hero" aria-hidden="true">
-    <svg viewBox="0 0 48 48">
-      <path d="M8 13h32v19H8z" />
-      <path d="M13 19h22M15 27c3 4 7 4 10 0m1 0c3 4 7 4 10 0" />
-      <path d="M15 37h18" />
-    </svg>
+<body class="searching">
+  <div class="hero">
+    <div class="radar" aria-hidden="true">
+      <div class="ring"></div><div class="ring"></div>
+      <div class="core">
+        <svg viewBox="0 0 960 960"><g fill="none" stroke="#fff" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"><path d="M190 230H770a90 90 0 0 1 90 90v130a70 70 0 0 1-70 70H170a70 70 0 0 1-70-70V320a90 90 0 0 1 90-90z"/><path d="M210 430h540M290 610c-40 60 40 90 0 160M480 610c-40 60 40 90 0 160M670 610c-40 60 40 90 0 160"/></g></svg>
+      </div>
+    </div>
+    <h1 id="title">Midea LAN</h1>
+    <p class="sub" id="subtitle">Searching your local network for air conditioners…</p>
   </div>
 
-  <h1 id="title">Midea LAN</h1>
-  <p class="subtitle" id="subtitle">Find your Midea air conditioner on the local network.</p>
-  <div class="notice" id="notice">Homey searches the local network for air conditioners. A SmartHome account is only needed once, for a new V3 air conditioner whose key Homey does not know yet; the password is not stored.</div>
+  <div class="list" id="list"></div>
 
-  <form id="pair-form" novalidate>
-    <label for="ip" id="ip-label">Air conditioner IP address (optional)</label>
-    <input id="ip" inputmode="decimal" autocomplete="off" placeholder="192.168.1.123" />
-    <div class="hint" id="ip-hint">Optional. Leave empty to search the whole local network automatically.</div>
+  <div class="panel hidden" id="login-panel">
+    <h2 id="smarthome-legend">SmartHome account</h2>
+    <p id="login-hint">This air conditioner uses encrypted V3 LAN and Homey does not know its key yet. The account is used once to fetch the local key; the password is not stored.</p>
+    <label for="account" id="account-label">SmartHome e-mail or phone</label>
+    <input id="account" type="text" autocomplete="username" placeholder="name@example.com" />
+    <label for="password" id="password-label">SmartHome password</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
+  </div>
 
-    <fieldset>
-      <legend id="smarthome-legend">SmartHome account</legend>
-
-      <label for="account" id="account-label">SmartHome e-mail or phone</label>
-      <input id="account" type="text" autocomplete="username" placeholder="name@example.com" />
-
-      <label for="password" id="password-label">SmartHome password</label>
-      <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
-      <div class="hint" id="login-hint">Optional. Only for a new V3 air conditioner. The password is not stored.</div>
-    </fieldset>
-
-    <details>
-      <summary id="advanced-label">Advanced: use an existing V3 token and key</summary>
+  <details id="advanced">
+    <summary id="advanced-label">Not in the list? Add by IP address or with a backed-up key</summary>
+    <div class="panel">
+      <label for="ip" id="ip-label">Air conditioner IP address</label>
+      <input id="ip" inputmode="decimal" autocomplete="off" placeholder="192.168.1.123" />
       <label for="token" id="token-label">V3 token</label>
       <input id="token" type="password" autocomplete="off" />
       <label for="key" id="key-label">V3 key</label>
       <input id="key" type="password" autocomplete="off" />
-      <div class="hint" id="advanced-hint">Use this only when you already have both values backed up.</div>
-    </details>
+      <p id="advanced-hint">Token and key are only needed for a V3 air conditioner when you do not want to use the SmartHome account.</p>
+    </div>
+  </details>
 
-    <button class="action-button" id="connect" type="submit">Find air conditioners</button>
-    <div id="status" role="status" aria-live="polite">Leave everything empty and press the button to search.</div>
-  </form>
+  <div class="row">
+    <button class="btn btn-ghost" id="rescan" type="button" aria-label="Search again">↻</button>
+    <button class="btn btn-primary" id="connect" type="button" disabled>Add air conditioner</button>
+  </div>
+  <div id="status" role="status" aria-live="polite"></div>
 
   <script>
-    function translate(key, fallback) {
+    var devices = [];
+    var selected = null;
+
+    function t(key, fallback, tokens) {
       try {
-        var value = Homey.__(key);
+        var value = Homey.__(key, tokens || {});
         if (typeof value === 'string' && value && value !== key) return value;
       } catch (error) {}
+      if (tokens) Object.keys(tokens).forEach(function (k) { fallback = fallback.replace('__' + k + '__', tokens[k]); });
       return fallback;
     }
 
     function emitAsync(event, data) {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         var settled = false;
         function done(error, result) {
           if (settled) return;
@@ -168,93 +138,162 @@
         }
         try {
           var result = Homey.emit(event, data, done);
-          if (result && typeof result.then === 'function') {
-            result.then(function(value) { done(null, value); }, done);
-          }
-        } catch (error) {
-          done(error);
-        }
+          if (result && typeof result.then === 'function') result.then(function (v) { done(null, v); }, done);
+        } catch (error) { done(error); }
       });
     }
 
-    function setText(id, key, fallback) {
-      document.getElementById(id).textContent = translate(key, fallback);
+    function $(id) { return document.getElementById(id); }
+    function setText(id, key, fallback) { $(id).textContent = t(key, fallback); }
+
+    function setStatus(message, state) {
+      var box = $('status');
+      box.className = state || '';
+      box.textContent = message || '';
     }
 
-    function setStatus(message, state, loading) {
-      var element = document.getElementById('status');
-      element.className = state || '';
-      element.textContent = '';
-      if (loading) {
-        var spinner = document.createElement('span');
-        spinner.className = 'spinner';
-        element.appendChild(spinner);
+    var acIcon = '<svg viewBox="0 0 960 960"><g fill="none" stroke="#fff" stroke-width="70" stroke-linecap="round" stroke-linejoin="round"><path d="M190 230H770a90 90 0 0 1 90 90v130a70 70 0 0 1-70 70H170a70 70 0 0 1-70-70V320a90 90 0 0 1 90-90z"/><path d="M210 430h540M290 610c-40 60 40 90 0 160M480 610c-40 60 40 90 0 160M670 610c-40 60 40 90 0 160"/></g></svg>';
+
+    function el(tag, cls, text) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    function manualIp() { return $('ip').value.trim(); }
+
+    function needsLogin() {
+      if (manualIp()) return !$('token').value.trim();
+      return !!(selected && selected.needs_login);
+    }
+
+    function refreshUi() {
+      Array.prototype.forEach.call(document.querySelectorAll('.ac'), function (card) {
+        card.classList.toggle('sel', !!selected && card.dataset.id === selected.device_id);
+      });
+      var target = selected || manualIp();
+      $('login-panel').classList.toggle('hidden', !target || !needsLogin());
+      $('connect').disabled = !target;
+    }
+
+    function render() {
+      var list = $('list');
+      list.textContent = '';
+      if (!devices.length) {
+        list.appendChild(el('div', 'empty', t('pair.none_found', 'No air conditioner answered. Make sure it is powered and on the same network as Homey, then search again, or add it by IP address below.')));
+        refreshUi();
+        return;
       }
-      element.appendChild(document.createTextNode(message));
+      devices.forEach(function (d) {
+        var card = el('div', 'ac' + (d.paired ? ' dim' : ''));
+        card.dataset.id = d.device_id;
+        var ico = el('div', 'ico');
+        ico.innerHTML = acIcon;
+        card.appendChild(ico);
+        var txt = el('div', 'txt');
+        txt.appendChild(el('div', 'name', d.model ? 'Midea ' + d.model : 'Midea AC'));
+        txt.appendChild(el('div', 'meta', d.ip + '  ·  ID ' + d.device_id + '  ·  V' + d.protocol));
+        var badge;
+        if (d.paired) badge = el('span', 'badge b-info', t('pair.badge_paired', 'Already in Homey'));
+        else if (d.needs_login) badge = el('span', 'badge b-warn', t('pair.badge_login', 'Needs SmartHome once'));
+        else badge = el('span', 'badge b-ok', t('pair.badge_ready', 'Ready, fully local'));
+        txt.appendChild(badge);
+        card.appendChild(txt);
+        card.appendChild(el('div', 'check'));
+        card.addEventListener('click', function () {
+          selected = d;
+          $('ip').value = '';
+          refreshUi();
+          setStatus('');
+        });
+        list.appendChild(card);
+      });
+      var fresh = devices.filter(function (d) { return !d.paired; });
+      if (!selected && fresh.length === 1) selected = fresh[0];
+      refreshUi();
+    }
+
+    async function scan() {
+      document.body.classList.add('searching');
+      $('rescan').disabled = true;
+      setText('subtitle', 'pair.searching', 'Searching your local network for air conditioners…');
+      setStatus('');
+      try {
+        devices = (await emitAsync('discover', {})) || [];
+      } catch (error) {
+        devices = [];
+        setStatus(error && error.message ? error.message : String(error), 'error');
+      }
+      document.body.classList.remove('searching');
+      $('rescan').disabled = false;
+      $('subtitle').textContent = devices.length
+        ? t('pair.found_count', 'Found __count__ air conditioner(s). Select one to add.', { count: devices.length })
+        : t('pair.subtitle', 'Find your Midea air conditioner on the local network.');
+      if (selected && !devices.some(function (d) { return d.device_id === selected.device_id; })) selected = null;
+      render();
+    }
+
+    async function connect() {
+      var payload = {
+        ip: manualIp() || (selected ? selected.ip : ''),
+        account: $('account').value.trim(),
+        password: $('password').value,
+        token: $('token').value.trim(),
+        key: $('key').value.trim()
+      };
+      if (!payload.ip) return;
+      if ((payload.token && !payload.key) || (!payload.token && payload.key)) {
+        setStatus(t('pair.token_key_required', 'Enter both the V3 token and key.'), 'error');
+        return;
+      }
+      if (needsLogin() && !payload.token && (!payload.account || !payload.password)) {
+        setStatus(t('pair.account_password_required', 'Enter both the SmartHome account and password.'), 'error');
+        $('account').focus();
+        return;
+      }
+      $('connect').disabled = true;
+      setStatus(t('pair.connecting', 'Verifying the local connection…'));
+      try {
+        await emitAsync('login', payload);
+        setStatus(t('pair.found', 'Air conditioner found.'), 'success');
+        Homey.showView('list_devices');
+      } catch (error) {
+        setStatus(error && error.message ? error.message : String(error), 'error');
+      } finally {
+        $('connect').disabled = false;
+      }
     }
 
     function applyTranslations() {
       setText('title', 'pair.title', 'Midea LAN');
-      setText('subtitle', 'pair.subtitle', 'Find your Midea air conditioner on the local network.');
-      setText('notice', 'pair.notice', 'Homey searches the local network for air conditioners. A SmartHome account is only needed once, for a new V3 air conditioner whose key Homey does not know yet; the password is not stored.');
-      setText('ip-label', 'pair.ip_label', 'Air conditioner IP address (optional)');
-      setText('ip-hint', 'pair.ip_hint', 'Optional. Leave empty to search the whole local network automatically.');
       setText('smarthome-legend', 'pair.smarthome_legend', 'SmartHome account');
+      setText('login-hint', 'pair.login_hint', 'This air conditioner uses encrypted V3 LAN and Homey does not know its key yet. The account is used once to fetch the local key; the password is not stored.');
       setText('account-label', 'pair.account_label', 'SmartHome e-mail or phone');
       setText('password-label', 'pair.password_label', 'SmartHome password');
-      setText('login-hint', 'pair.login_hint', 'Optional. Only for a new V3 air conditioner. The password is not stored.');
-      setText('advanced-label', 'pair.advanced_label', 'Advanced: use an existing V3 token and key');
+      setText('advanced-label', 'pair.advanced_label', 'Not in the list? Add by IP address or with a backed-up key');
+      setText('ip-label', 'pair.ip_label', 'Air conditioner IP address');
       setText('token-label', 'pair.token_label', 'V3 token');
       setText('key-label', 'pair.key_label', 'V3 key');
-      setText('advanced-hint', 'pair.advanced_hint', 'Use this only when you already have both values backed up.');
-      setText('connect', 'pair.connect_button', 'Find air conditioners');
-      setStatus(translate('pair.ready', 'Leave everything empty and press the button to search.'), '', false);
-      document.getElementById('ip').placeholder = translate('pair.ip_placeholder', '192.168.1.123');
-      document.getElementById('account').placeholder = translate('pair.account_placeholder', 'name@example.com');
-      document.getElementById('password').placeholder = translate('pair.password_placeholder', 'Password');
-      try {
-        Homey.setTitle(translate('pair.title', 'Midea LAN'));
-        Homey.setSubtitle(translate('pair.subtitle', 'Find your Midea air conditioner on the local network.'));
-      } catch (error) {}
+      setText('advanced-hint', 'pair.advanced_hint', 'Token and key are only needed for a V3 air conditioner when you do not want to use the SmartHome account.');
+      setText('connect', 'pair.connect_button', 'Add air conditioner');
+      $('ip').placeholder = t('pair.ip_placeholder', '192.168.1.123');
+      $('account').placeholder = t('pair.account_placeholder', 'name@example.com');
+      $('password').placeholder = t('pair.password_placeholder', 'Password');
+      try { Homey.setTitle(t('pair.title', 'Midea LAN')); } catch (error) {}
     }
 
-    async function connect(event) {
-      event.preventDefault();
-      var button = document.getElementById('connect');
-      var payload = {
-        ip: document.getElementById('ip').value.trim(),
-        account: document.getElementById('account').value.trim(),
-        password: document.getElementById('password').value,
-        token: document.getElementById('token').value.trim(),
-        key: document.getElementById('key').value.trim()
-      };
-
-      if ((payload.account && !payload.password) || (!payload.account && payload.password)) {
-        setStatus(translate('pair.account_password_required', 'Enter both the SmartHome account and password.'), 'error', false);
-        return;
-      }
-      if ((payload.token && !payload.key) || (!payload.token && payload.key)) {
-        setStatus(translate('pair.token_key_required', 'Enter both the V3 token and key.'), 'error', false);
-        return;
-      }
-
-      button.disabled = true;
-      setStatus(translate('pair.connecting', 'Searching the local network and verifying the LAN connection…'), '', true);
-      try {
-        await emitAsync('login', payload);
-        setStatus(translate('pair.found', 'Air conditioner found.'), 'success', false);
-        Homey.showView('list_devices');
-      } catch (error) {
-        var message = error && error.message ? error.message : String(error);
-        setStatus(message, 'error', false);
-      } finally {
-        button.disabled = false;
-      }
-    }
-
-    document.getElementById('pair-form').addEventListener('submit', connect);
+    $('rescan').addEventListener('click', scan);
+    $('connect').addEventListener('click', connect);
+    ['ip', 'token', 'key'].forEach(function (id) {
+      $(id).addEventListener('input', function () {
+        if (id === 'ip' && manualIp()) selected = null;
+        refreshUi();
+      });
+    });
     applyTranslations();
     Homey.ready();
+    scan();
   </script>
 </body>
 </html>
