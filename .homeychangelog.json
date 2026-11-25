@@ -5,5 +5,9 @@
   },
   "1.0.2": {
     "en": "New realeases"
+  },
+  "1.1.0": {
+    "en": "Status updates now work: changes made with the remote control and live power are refreshed every 15 s (light query mode). New filter-cleaning alarm with a device warning and Flow cards. Automatic local discovery without entering the IP address; already known air conditioners are added without a SmartHome login. The AC is found again automatically when its IP address changes.",
+    "sk": "Aktualizácia stavu funguje: zmeny z diaľkového ovládača a aktuálny príkon sa obnovujú každých 15 s (šetrný režim dotazov). Nové upozornenie na vyčistenie filtra s varovaním na zariadení a Flow kartami. Automatické lokálne vyhľadanie bez zadávania IP adresy; už známe klimatizácie sa pridajú bez prihlásenia do SmartHome. Pri zmene IP adresy sa klimatizácia nájde automaticky."
   }
 }

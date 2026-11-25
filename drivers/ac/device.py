@@ -11,6 +11,14 @@ from midealan.const import DeviceType, ProtocolVersion
 from midealan.devices import device_selector
 
 from app.lib.energy import EnergyTracker
+from app.lib.runtime import (
+    DEFAULT_POLL_SECONDS,
+    LIGHT_QUERY_CLASS_NAMES,
+    active_warning,
+    filter_dirty,
+    normalize_query_mode,
+    poll_seconds,
+)
 from app.lib.mappings import (
     EstimateConfig,
     estimate_power_w,
@@ -46,6 +54,10 @@ class MideaACDevice(Device):
         self._have_device_state = False
         self._last_device_update_monotonic = 0.0
         self._safe_energy_task: asyncio.Task | None = None
+        self._rediscover_task: asyncio.Task | None = None
+        self._offline_since: float | None = None
+        self._filter_dirty: bool | None = None
+        self._warning_shown: tuple[str, str] | None = None
         stored_energy = (self.get_store() or {}).get("energy_state")
         # ``Device._energy`` belongs to the Homey SDK. Using that name for our
         # tracker corrupted Homey's own energy metadata on SDK 3. Keep the
@@ -59,6 +71,12 @@ class MideaACDevice(Device):
             pass
         self._last_energy_persisted_total = self._energy_tracker.total_kwh
 
+        await self._migrate_settings()
+        if not self.has_capability("midea_filter_alarm"):
+            try:
+                await self.add_capability("midea_filter_alarm")
+            except Exception as exc:
+                self.error(f"Could not add the filter capability: {exc}")
         self._register_capability_listeners()
         # Preserve the last live power across an app restart until the first
         # fresh device status arrives. Writing zero here created artificial
@@ -75,10 +93,29 @@ class MideaACDevice(Device):
         await self.set_unavailable("Connecting to the Midea air conditioner...")
         await self._start_client()
         self._safe_energy_task = asyncio.create_task(self._safe_energy_loop())
+        self._rediscover_task = asyncio.create_task(self._rediscover_loop())
         self.log(
             f"Initialized {self.get_name()} at {self.get_setting('ip')} "
-            f"safe_mode={self._safe_mode_enabled()}"
+            f"query_mode={self._query_mode()} poll={self._poll_seconds()}s"
         )
+
+    async def _migrate_settings(self) -> None:
+        """1.0.x had a single Safe Mode switch that sent no status queries at all.
+
+        That kept the AC from ever reporting remote-control changes or live
+        power. Move such devices to the light query mode (state + power only).
+        """
+        if self.get_setting("query_mode") in ("light", "push", "full"):
+            return
+        updates: dict[str, Any] = {"query_mode": "light"}
+        old_poll = safe_int(self.get_setting("poll_interval"), 30)
+        if old_poll >= 30:
+            updates["poll_interval"] = DEFAULT_POLL_SECONDS
+        try:
+            await self.set_settings(updates)
+            self.log(f"Migrated settings to {updates}")
+        except Exception as exc:
+            self.error(f"Settings migration failed: {exc}")
 
     def _register_capability_listeners(self) -> None:
         self.register_capability_listener("onoff", self._on_power)
@@ -133,18 +170,41 @@ class MideaACDevice(Device):
             return overrides[key]
         return self.get_setting(key)
 
+    def _query_mode(self, overrides: dict[str, Any] | None = None) -> str:
+        return normalize_query_mode(self._setting("query_mode", overrides))
+
+    def _poll_seconds(self, overrides: dict[str, Any] | None = None) -> int:
+        return poll_seconds(self._setting("poll_interval", overrides))
+
     def _safe_mode_enabled(
         self, overrides: dict[str, Any] | None = None
     ) -> bool:
-        value = self._setting("safe_mode", overrides)
-        # Existing devices created before v1.0.4 have no stored value. Make the
-        # safe behaviour the migration default rather than silently retaining
-        # the query burst that can wake/beep/reset affected AC models.
-        if value is None:
-            return True
-        if isinstance(value, str):
-            return value.strip().lower() not in {"0", "false", "off", "no"}
-        return bool(value)
+        """Push-only mode: no status queries at all (the 1.0.x Safe Mode)."""
+        return self._query_mode(overrides) == "push"
+
+    @staticmethod
+    def _limit_ac_queries(client: Any) -> None:
+        """Light mode: skip capability probes, poll only state + power.
+
+        build_query() of midea-lan returns state, properties, power, humidity
+        and four group queries. Keep only the state and power query (the same
+        frames the SmartHome app uses for its status screen) so the AC still
+        reports remote-control changes, the filter flag and live power.
+        """
+        original = client.build_query
+
+        def light_query(_client: Any) -> list:
+            queries = original()
+            if getattr(_client, "_used_subprotocol", False):
+                return queries
+            return [
+                query
+                for query in queries
+                if query.__class__.__name__ in LIGHT_QUERY_CLASS_NAMES
+            ]
+
+        client.build_init_query = MethodType(lambda _client: [], client)
+        client.build_query = MethodType(light_query, client)
 
     @staticmethod
     def _disable_active_ac_queries(client: Any) -> None:
@@ -283,16 +343,20 @@ class MideaACDevice(Device):
             )
             if client is None:
                 raise RuntimeError("midea-lan did not create an AC device handler")
-            safe_mode = self._safe_mode_enabled(overrides)
-            if safe_mode:
+            query_mode = self._query_mode(overrides)
+            # Until the first real status frame arrives, client.attributes holds
+            # constructor defaults; never copy those over Homey's state.
+            safe_mode = query_mode != "full"
+            if query_mode == "push":
                 self._disable_active_ac_queries(client)
-                self.log(
-                    "Safe LAN mode active: AC-specific status/capability queries are disabled; "
-                    "using device push notifications and TCP heartbeat only."
-                )
+                self.log("Push-only mode: no status queries, device notifications only.")
             else:
-                client.set_refresh_interval(
-                    max(15, safe_int(self._setting("poll_interval", overrides), 30))
+                if query_mode == "light":
+                    self._limit_ac_queries(client)
+                client.set_refresh_interval(self._poll_seconds(overrides))
+                self.log(
+                    f"{query_mode} query mode, status refresh every "
+                    f"{self._poll_seconds(overrides)} s"
                 )
 
             def update_callback(status: dict[str, Any]) -> None:
@@ -371,8 +435,67 @@ class MideaACDevice(Device):
         await self.set_unavailable("Reconnecting to the Midea air conditioner...")
         await self._start_client(overrides)
 
+    async def _rediscover_loop(self) -> None:
+        """Find the AC again when its IP address changed (DHCP)."""
+        try:
+            while not self._closing:
+                await asyncio.sleep(60)
+                if self._closing:
+                    return
+                if self._device_available:
+                    self._offline_since = None
+                    continue
+                now = time.monotonic()
+                if self._offline_since is None:
+                    self._offline_since = now
+                    continue
+                if now - self._offline_since < 180:
+                    continue
+                self._offline_since = now  # next attempt in 3 minutes
+                await self._try_rediscover()
+        except asyncio.CancelledError:
+            return
+        except Exception as exc:
+            self.log(f"Rediscovery loop warning: {exc}")
+
+    async def _try_rediscover(self) -> None:
+        from midealan.discover import discover
+
+        device_id = str(self.get_setting("device_id") or "")
+        current_ip = str(self.get_setting("ip") or "")
+        try:
+            found = await asyncio.to_thread(lambda: discover([int(DeviceType.AC)]))
+        except Exception as exc:
+            self.log(f"Rediscovery failed: {exc}")
+            return
+        for found_id, info in (found or {}).items():
+            if str(found_id) != device_id:
+                continue
+            new_ip = str(info.get("ip_address") or "")
+            if new_ip and new_ip != current_ip:
+                self.log(f"AC moved from {current_ip} to {new_ip}; reconnecting")
+                updates = {"ip": new_ip}
+                port = safe_int(info.get("port"), 0)
+                if port:
+                    updates["port"] = port
+                await self.set_settings(updates)
+                await self.rebuild_connection(updates)
+            return
+
+    async def _stop_task(self, name: str) -> None:
+        task = getattr(self, name, None)
+        setattr(self, name, None)
+        if task is None:
+            return
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
     async def on_uninit(self) -> None:
         self._closing = True
+        await self._stop_task("_rediscover_task")
         await self._stop_safe_energy_loop()
         await self._persist_energy(force=True)
         await self._stop_client()
@@ -380,6 +503,7 @@ class MideaACDevice(Device):
 
     async def on_deleted(self) -> None:
         self._closing = True
+        await self._stop_task("_rediscover_task")
         await self._stop_safe_energy_loop()
         await self._persist_energy(force=True)
         await self._stop_client()
@@ -391,15 +515,13 @@ class MideaACDevice(Device):
         changed_keys: list[str] | tuple[str, ...],
     ) -> str | None:
         keys = set(changed_keys or [])
-        if keys & {"ip", "port", "device_id", "protocol", "model", "subtype", "token", "key", "mac", "serial_number", "customize", "power_analysis_method", "safe_mode"}:
+        if keys & {"ip", "port", "device_id", "protocol", "model", "subtype", "token", "key", "mac", "serial_number", "customize", "power_analysis_method", "query_mode"}:
             await self.rebuild_connection(new_settings)
         elif "poll_interval" in keys and self._client is not None:
             if self._safe_mode_enabled(new_settings):
                 self._client.set_refresh_interval(0)
             else:
-                self._client.set_refresh_interval(
-                    max(15, safe_int(new_settings.get("poll_interval"), 30))
-                )
+                self._client.set_refresh_interval(self._poll_seconds(new_settings))
 
         if keys & {"consumption_mode", "cooling_power_w", "heating_power_w", "dry_power_w", "fan_power_w", "standby_power_w", "estimated_load_factor", "power_calibration_percent"}:
             await self._update_energy_from_status(
@@ -463,6 +585,14 @@ class MideaACDevice(Device):
             await self._set_capability("midea_error_code", error_code)
             await self._set_capability("alarm_generic", error_code != 0)
 
+            dirty = filter_dirty(status)
+            if dirty is not None and self._have_device_state:
+                await self._set_capability("midea_filter_alarm", dirty)
+                if self._filter_dirty is not None and dirty != self._filter_dirty:
+                    await self.driver.trigger_filter(self, dirty)
+                self._filter_dirty = dirty
+            await self._update_warning(error_code)
+
             await self._update_target_range(status)
             await self._update_energy_from_status(status, available=available)
             self._device_available = available
@@ -485,6 +615,34 @@ class MideaACDevice(Device):
             if self._last_error is not None and error_code and error_code != self._last_error:
                 await self.driver.trigger_error(self, error_code)
             self._last_error = error_code
+
+    async def _update_warning(self, error_code: int) -> None:
+        warning = active_warning(filter_is_dirty=self._filter_dirty, error_code=error_code)
+        if warning is None:
+            if self._warning_shown is not None:
+                self._warning_shown = None
+                try:
+                    await self.unset_warning()
+                except Exception as exc:
+                    self.log(f"Could not clear the warning: {exc}")
+            return
+        try:
+            text = self.homey.translate(
+                warning.key, **{k: str(v) for k, v in warning.tokens.items()}
+            )
+        except Exception:
+            text = None
+        text = text or warning.key
+        if self._warning_shown == (warning.key, text):
+            return
+        self._warning_shown = (warning.key, text)
+        try:
+            await self.set_warning(text)
+        except Exception as exc:
+            self.log(f"Could not show the warning: {exc}")
+
+    def filter_needs_cleaning(self) -> bool:
+        return bool(self.get_capability_value("midea_filter_alarm"))
 
     async def _update_target_range(self, status: dict[str, Any]) -> None:
         minimum = safe_float(status.get("min_temperature"))
@@ -536,9 +694,7 @@ class MideaACDevice(Device):
             eco=bool(status.get("eco_mode", False)),
             config=self._estimate_config(settings_overrides),
         )
-        poll_interval = max(
-            15, safe_int(self._setting("poll_interval", settings_overrides), 30)
-        )
+        poll_interval = self._poll_seconds(settings_overrides)
         native_power = safe_float(status.get("realtime_power"))
         # A number of Wi-Fi modules expose the field but return a permanent
         # zero while the AC is running. Treat that as unavailable instead of
@@ -640,14 +796,16 @@ class MideaACDevice(Device):
     async def refresh_now(self) -> None:
         client = self._require_client()
         if self._safe_mode_enabled():
-            # Safe Mode deliberately performs no status query. Re-apply the latest
-            # in-memory attributes only; device notifications remain authoritative.
+            # Push-only mode deliberately performs no status query. Re-apply the
+            # latest in-memory attributes only.
             snapshot = dict(self._status)
             if snapshot:
                 await self._apply_status(snapshot, self._generation)
-            self.log("Safe LAN mode: manual active refresh skipped (zero AC queries sent).")
+            self.log("Push-only mode: manual refresh skipped (zero AC queries sent).")
             return
-        await asyncio.to_thread(client.refresh_status)
+        # Let the client's own thread send the next status query right away;
+        # calling refresh_status() from here would race its socket loop.
+        client._previous_refresh = 0.0
 
     def current_mode(self) -> str:
         value = self.get_capability_value("midea_mode")

@@ -15,7 +15,7 @@ assert manifest["pythonVersion"] == "3.14"
 assert "midea-lan==2026.9.0" in manifest["pythonPackages"]
 assert "certifi==2025.8.3" in manifest["pythonPackages"]
 assert len(manifest["drivers"]) == 1
-assert manifest["version"] == "1.0.4"
+assert manifest["version"] == "1.1.0"
 
 driver = manifest["drivers"][0]
 assert driver["id"] == "ac"
@@ -25,8 +25,8 @@ assert driver.get("energy", {}).get("meterPowerImportedCapability") == "meter_po
 
 setting_ids = {setting["id"] for setting in driver.get("settings", [])}
 assert "consumption_mode" in setting_ids
-assert "safe_mode" in setting_ids
-assert next(s for s in driver["settings"] if s.get("id") == "safe_mode")["value"] is True
+assert "safe_mode" not in setting_ids
+assert next(s for s in driver["settings"] if s.get("id") == "query_mode")["value"] == "light"
 assert "power_calibration_percent" in setting_ids
 assert "energy_mode" not in setting_ids
 assert not any(setting_id.startswith("energy_") for setting_id in setting_ids)
@@ -53,7 +53,7 @@ assert "ssl.create_default_context(cafile=certifi.where())" in pairing_py
 assert "TCPConnector(ssl=ssl_context)" in pairing_py
 assert '"power_analysis_method": "auto"' in pairing_py
 assert '"power_calibration_percent": 100' in pairing_py
-assert '"safe_mode": True' in pairing_py
+assert '"query_mode": "light"' in pairing_py
 
 app_py = (ROOT / "app.py").read_text(encoding="utf-8")
 assert 'os.environ["SSL_CERT_FILE"] = certifi.where()' in app_py

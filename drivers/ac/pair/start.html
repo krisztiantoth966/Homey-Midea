@@ -117,13 +117,13 @@
   </div>
 
   <h1 id="title">Midea LAN</h1>
-  <p class="subtitle" id="subtitle">Connect your Midea air conditioner to Homey over the local network.</p>
-  <div class="notice" id="notice">SmartHome is used only during pairing to obtain the local V3 token and key. The password is not stored.</div>
+  <p class="subtitle" id="subtitle">Find your Midea air conditioner on the local network.</p>
+  <div class="notice" id="notice">Homey searches the local network for air conditioners. A SmartHome account is only needed once, for a new V3 air conditioner whose key Homey does not know yet; the password is not stored.</div>
 
   <form id="pair-form" novalidate>
-    <label for="ip" id="ip-label">Air conditioner IP address</label>
+    <label for="ip" id="ip-label">Air conditioner IP address (optional)</label>
     <input id="ip" inputmode="decimal" autocomplete="off" placeholder="192.168.1.123" />
-    <div class="hint" id="ip-hint">Recommended: reserve this address in your router. Leave it empty only to try network discovery.</div>
+    <div class="hint" id="ip-hint">Optional. Leave empty to search the whole local network automatically.</div>
 
     <fieldset>
       <legend id="smarthome-legend">SmartHome account</legend>
@@ -133,7 +133,7 @@
 
       <label for="password" id="password-label">SmartHome password</label>
       <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
-      <div class="hint" id="login-hint">Required for most V3 Wi-Fi modules. The password is not stored after pairing.</div>
+      <div class="hint" id="login-hint">Optional. Only for a new V3 air conditioner. The password is not stored.</div>
     </fieldset>
 
     <details>
@@ -145,8 +145,8 @@
       <div class="hint" id="advanced-hint">Use this only when you already have both values backed up.</div>
     </details>
 
-    <button class="action-button" id="connect" type="submit">Sign in to SmartHome and find the AC</button>
-    <div id="status" role="status" aria-live="polite">Enter the IP address and SmartHome credentials.</div>
+    <button class="action-button" id="connect" type="submit">Find air conditioners</button>
+    <div id="status" role="status" aria-live="polite">Leave everything empty and press the button to search.</div>
   </form>
 
   <script>
@@ -195,26 +195,26 @@
 
     function applyTranslations() {
       setText('title', 'pair.title', 'Midea LAN');
-      setText('subtitle', 'pair.subtitle', 'Connect your Midea air conditioner to Homey over the local network.');
-      setText('notice', 'pair.notice', 'SmartHome is used only during pairing to obtain the local V3 token and key. The password is not stored.');
-      setText('ip-label', 'pair.ip_label', 'Air conditioner IP address');
-      setText('ip-hint', 'pair.ip_hint', 'Recommended: reserve this address in your router. Leave it empty only to try network discovery.');
+      setText('subtitle', 'pair.subtitle', 'Find your Midea air conditioner on the local network.');
+      setText('notice', 'pair.notice', 'Homey searches the local network for air conditioners. A SmartHome account is only needed once, for a new V3 air conditioner whose key Homey does not know yet; the password is not stored.');
+      setText('ip-label', 'pair.ip_label', 'Air conditioner IP address (optional)');
+      setText('ip-hint', 'pair.ip_hint', 'Optional. Leave empty to search the whole local network automatically.');
       setText('smarthome-legend', 'pair.smarthome_legend', 'SmartHome account');
       setText('account-label', 'pair.account_label', 'SmartHome e-mail or phone');
       setText('password-label', 'pair.password_label', 'SmartHome password');
-      setText('login-hint', 'pair.login_hint', 'Required for most V3 Wi-Fi modules. The password is not stored after pairing.');
+      setText('login-hint', 'pair.login_hint', 'Optional. Only for a new V3 air conditioner. The password is not stored.');
       setText('advanced-label', 'pair.advanced_label', 'Advanced: use an existing V3 token and key');
       setText('token-label', 'pair.token_label', 'V3 token');
       setText('key-label', 'pair.key_label', 'V3 key');
       setText('advanced-hint', 'pair.advanced_hint', 'Use this only when you already have both values backed up.');
-      setText('connect', 'pair.connect_button', 'Sign in to SmartHome and find the AC');
-      setStatus(translate('pair.ready', 'Enter the IP address and SmartHome credentials.'), '', false);
+      setText('connect', 'pair.connect_button', 'Find air conditioners');
+      setStatus(translate('pair.ready', 'Leave everything empty and press the button to search.'), '', false);
       document.getElementById('ip').placeholder = translate('pair.ip_placeholder', '192.168.1.123');
       document.getElementById('account').placeholder = translate('pair.account_placeholder', 'name@example.com');
       document.getElementById('password').placeholder = translate('pair.password_placeholder', 'Password');
       try {
         Homey.setTitle(translate('pair.title', 'Midea LAN'));
-        Homey.setSubtitle(translate('pair.subtitle', 'Connect your Midea air conditioner to Homey over the local network.'));
+        Homey.setSubtitle(translate('pair.subtitle', 'Find your Midea air conditioner on the local network.'));
       } catch (error) {}
     }
 
@@ -239,7 +239,7 @@
       }
 
       button.disabled = true;
-      setStatus(translate('pair.connecting', 'Discovering the AC, signing in to SmartHome and verifying the LAN connection…'), '', true);
+      setStatus(translate('pair.connecting', 'Searching the local network and verifying the LAN connection…'), '', true);
       try {
         await emitAsync('login', payload);
         setStatus(translate('pair.found', 'Air conditioner found.'), 'success', false);

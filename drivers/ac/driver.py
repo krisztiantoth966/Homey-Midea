@@ -14,6 +14,8 @@ class MideaACDriver(Driver):
         self._mode_trigger = flow.get_device_trigger_card("midea_mode_changed")
         self._energy_source_trigger = flow.get_device_trigger_card("midea_energy_source_changed")
         self._error_trigger = flow.get_device_trigger_card("midea_error_occurred")
+        self._filter_dirty_trigger = flow.get_device_trigger_card("midea_filter_dirty")
+        self._filter_clean_trigger = flow.get_device_trigger_card("midea_filter_cleaned")
 
         async def set_mode(args: dict[str, Any], **kwargs: Any) -> None:
             await args["device"].set_mode(str(args["mode"]))
@@ -39,6 +41,9 @@ class MideaACDriver(Driver):
         async def is_mode(args: dict[str, Any], **kwargs: Any) -> bool:
             return args["device"].current_mode() == str(args["mode"])
 
+        async def filter_is_dirty(args: dict[str, Any], **kwargs: Any) -> bool:
+            return args["device"].filter_needs_cleaning()
+
         async def energy_is_native(args: dict[str, Any], **kwargs: Any) -> bool:
             return args["device"].energy_source() == "native"
 
@@ -51,6 +56,7 @@ class MideaACDriver(Driver):
         flow.get_action_card("midea_refresh_now").register_run_listener(refresh)
         flow.get_condition_card("midea_is_mode").register_run_listener(is_mode)
         flow.get_condition_card("midea_energy_is_native").register_run_listener(energy_is_native)
+        flow.get_condition_card("midea_filter_is_dirty").register_run_listener(filter_is_dirty)
 
         self.log("Midea AC driver initialized")
 
@@ -62,6 +68,24 @@ class MideaACDriver(Driver):
 
     async def trigger_error(self, device, code: int) -> None:
         await self._error_trigger.trigger(device, {"code": code})
+
+    async def trigger_filter(self, device, dirty: bool) -> None:
+        card = self._filter_dirty_trigger if dirty else self._filter_clean_trigger
+        await card.trigger(device, {})
+
+    def _known_keys(self) -> dict[int, tuple[str, str]]:
+        """V3 keys of ACs already paired, so they can be re-added locally."""
+        keys: dict[int, tuple[str, str]] = {}
+        for device in self.get_devices():
+            try:
+                device_id = int(str(device.get_setting("device_id") or "0"))
+                token = str(device.get_setting("token") or "")
+                key = str(device.get_setting("key") or "")
+            except Exception:
+                continue
+            if device_id and token and key:
+                keys[device_id] = (token, key)
+        return keys
 
     async def on_pair(self, session) -> None:
         found_devices = []
@@ -75,6 +99,7 @@ class MideaACDriver(Driver):
                     password=str(data.get("password") or ""),
                     manual_token=str(data.get("token") or ""),
                     manual_key=str(data.get("key") or ""),
+                    known_keys=self._known_keys(),
                 )
             except PairingError:
                 raise
@@ -109,6 +134,7 @@ class MideaACDriver(Driver):
                 password=str(data.get("password") or ""),
                 manual_token=str(data.get("token") or current_token),
                 manual_key=str(data.get("key") or current_key),
+                known_keys=self._known_keys(),
             )
             expected = str(device.get_setting("device_id") or "")
             match = next((item for item in found if str(item.device_id) == expected), None)

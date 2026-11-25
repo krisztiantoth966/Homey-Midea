@@ -13,7 +13,7 @@ class PackagingTests(unittest.TestCase):
         self.driver = self.manifest["drivers"][0]
 
     def test_version_dependency_and_energy_mapping(self) -> None:
-        self.assertEqual(self.manifest["version"], "1.0.4")
+        self.assertEqual(self.manifest["version"], "1.1.0")
         self.assertIn("midea-lan==2026.9.0", self.manifest["pythonPackages"])
         self.assertEqual(
             self.driver.get("energy", {}).get("meterPowerImportedCapability"),
@@ -34,9 +34,10 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("power_calibration_percent", setting_ids)
         self.assertNotIn("energy_mode", setting_ids)
         self.assertFalse(any(value.startswith("energy_") for value in setting_ids))
-        self.assertIn("safe_mode", setting_ids)
-        safe = next(item for item in self.driver["settings"] if item.get("id") == "safe_mode")
-        self.assertTrue(safe["value"])
+        self.assertNotIn("safe_mode", setting_ids)
+        mode = next(item for item in self.driver["settings"] if item.get("id") == "query_mode")
+        self.assertEqual(mode["value"], "light")
+        self.assertEqual({v["id"] for v in mode["values"]}, {"light", "push", "full"})
 
     def test_auto_power_method_and_known_profiles(self) -> None:
         setting = next(
@@ -57,14 +58,27 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("seed_minimum", source)
         self.assertIn("native_power < 5.0", source)
 
-    def test_safe_mode_suppresses_ac_query_bursts(self) -> None:
+    def test_query_modes(self) -> None:
         source = (ROOT / "drivers/ac/device.py").read_text(encoding="utf-8")
+        # push-only keeps the zero-query behaviour of the old Safe Mode
         self.assertIn("_disable_active_ac_queries", source)
-        self.assertIn("client.build_init_query = MethodType(lambda _client: [], client)", source)
         self.assertIn("client.build_query = MethodType(lambda _client: [], client)", source)
         self.assertIn("client.set_refresh_interval(0)", source)
-        self.assertIn("Safe LAN mode: manual active refresh skipped", source)
         self.assertIn("_safe_energy_loop", source)
+        # light mode: no capability probes, only state + power queries
+        self.assertIn("_limit_ac_queries", source)
+        self.assertIn("client.build_query = MethodType(light_query, client)", source)
+        self.assertIn("client.build_init_query = MethodType(lambda _client: [], client)", source)
+        self.assertIn("_migrate_settings", source)
+
+    def test_filter_alarm(self) -> None:
+        self.assertIn("midea_filter_alarm", self.driver["capabilities"])
+        triggers = {c["id"] for c in self.manifest["flow"]["triggers"]}
+        self.assertTrue({"midea_filter_dirty", "midea_filter_cleaned"} <= triggers)
+        for lang in ("en", "sk"):
+            locale = json.loads((ROOT / f"locales/{lang}.json").read_text(encoding="utf-8"))
+            self.assertIn("__code__", locale["warnings"]["error_code"])
+            self.assertTrue(locale["warnings"]["filter"])
 
     def test_tracker_uses_live_power_before_native_counter_in_auto(self) -> None:
         source = (ROOT / "lib/energy.py").read_text(encoding="utf-8")

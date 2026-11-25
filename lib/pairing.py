@@ -44,8 +44,8 @@ class PairingDevice:
             "mac": self.mac,
             "token": self.token,
             "key": self.key,
-            "poll_interval": 30,
-            "safe_mode": True,
+            "poll_interval": 15,
+            "query_mode": "light",
             "power_analysis_method": "auto",
             "customize": "",
             "consumption_mode": "auto",
@@ -139,7 +139,18 @@ async def prepare_pairing_devices(
     password: str,
     manual_token: str = "",
     manual_key: str = "",
+    known_keys: dict[int, tuple[str, str]] | None = None,
 ) -> list[PairingDevice]:
+    """Discover ACs on the LAN and prepare them for Homey.
+
+    known_keys maps device IDs to V3 (token, key) pairs Homey already has
+    (devices paired before), so re-adding them needs no cloud login at all.
+    """
+    known_keys = {
+        int(device_id): (str(pair[0]).lower(), str(pair[1]).lower())
+        for device_id, pair in (known_keys or {}).items()
+        if pair and pair[0] and pair[1]
+    }
     ip = _validate_ip(ip)
     manual_token, manual_key = _validate_hex_pair(manual_token, manual_key)
     account = account.strip()
@@ -157,10 +168,16 @@ async def prepare_pairing_devices(
             "No Midea air conditioner was discovered. Enter its IP address from your router and try again."
         )
 
-    needs_cloud = any(int(item.get("protocol") or 3) == int(ProtocolVersion.V3) for item in found.values())
+    needs_cloud = any(
+        int(item.get("protocol") or 3) == int(ProtocolVersion.V3)
+        and int(device_id) not in known_keys
+        for device_id, item in found.items()
+    )
     if needs_cloud and not manual_token and (not account or not password):
         raise PairingError(
-            "A SmartHome email and password, or a manual token and key, are required for this V3 device."
+            "This air conditioner uses encrypted V3 LAN and Homey does not know its key yet. "
+            "Enter the SmartHome account once (only used to fetch the local key), "
+            "or a backed-up V3 token and key."
         )
 
     http: ClientSession | None = None
@@ -202,6 +219,8 @@ async def prepare_pairing_devices(
 
             if protocol == int(ProtocolVersion.V3):
                 candidates: list[tuple[str, str]] = []
+                if int(device_id) in known_keys:
+                    candidates.append(known_keys[int(device_id)])
                 if manual_token and manual_key:
                     candidates.append((manual_token, manual_key))
                 if cloud is not None:

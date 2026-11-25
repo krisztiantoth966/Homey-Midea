@@ -1,6 +1,6 @@
 {
   "id": "com.tothk.midea",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "compatibility": ">=13.2.1",
   "sdk": 3,
   "runtime": "python",
@@ -369,6 +369,26 @@
       "decimals": 0,
       "step": 1,
       "icon": "/assets/capabilities/error.svg"
+    },
+    "midea_filter_alarm": {
+      "type": "boolean",
+      "title": {
+        "en": "Filter needs cleaning",
+        "sk": "Vyčistiť filter"
+      },
+      "getable": true,
+      "setable": false,
+      "insights": true,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/clean.svg",
+      "insightsTitleTrue": {
+        "en": "Filter needs cleaning",
+        "sk": "Filter treba vyčistiť"
+      },
+      "insightsTitleFalse": {
+        "en": "Filter clean",
+        "sk": "Filter čistý"
+      }
     }
   },
   "flow": {
@@ -442,6 +462,34 @@
               "en": "Error code",
               "sk": "Chybový kód"
             }
+          }
+        ]
+      },
+      {
+        "id": "midea_filter_dirty",
+        "title": {
+          "en": "The filter needs cleaning",
+          "sk": "Filter treba vyčistiť"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ]
+      },
+      {
+        "id": "midea_filter_cleaned",
+        "title": {
+          "en": "The filter reminder was cleared",
+          "sk": "Pripomienka čistenia filtra zmizla"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
           }
         ]
       }
@@ -518,6 +566,20 @@
         "title": {
           "en": "Native energy measurement !{{is|is not}} available",
           "sk": "Natívne meranie energie !{{je|nie je}} dostupné"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=ac"
+          }
+        ]
+      },
+      {
+        "id": "midea_filter_is_dirty",
+        "title": {
+          "en": "Filter !{{needs|does not need}} cleaning",
+          "sk": "Filter !{{treba|netreba}} vyčistiť"
         },
         "args": [
           {
@@ -852,6 +914,7 @@
         "midea_purifier",
         "midea_beep",
         "midea_self_clean",
+        "midea_filter_alarm",
         "alarm_generic",
         "midea_error_code"
       ],
@@ -967,28 +1030,51 @@
           "max": 65535
         },
         {
-          "id": "safe_mode",
-          "type": "checkbox",
-          "label": {
-            "en": "Safe LAN mode (recommended)",
-            "sk": "Bezpečný LAN režim (odporúčané)"
-          },
-          "value": true,
+          "id": "query_mode",
+          "type": "dropdown",
+          "value": "light",
           "highlight": true,
+          "label": {
+            "en": "Status updates",
+            "sk": "Aktualizácia stavu"
+          },
+          "values": [
+            {
+              "id": "light",
+              "label": {
+                "en": "Light: state + power every interval (recommended)",
+                "sk": "Šetrné: stav + príkon v intervale (odporúčané)"
+              }
+            },
+            {
+              "id": "push",
+              "label": {
+                "en": "Push only: no queries (old Safe Mode)",
+                "sk": "Iba hlásenia klímy: bez dotazov (starý bezpečný režim)"
+              }
+            },
+            {
+              "id": "full",
+              "label": {
+                "en": "Full: all midea-lan queries",
+                "sk": "Úplné: všetky dotazy midea-lan"
+              }
+            }
+          ],
           "hint": {
-            "en": "Disables all periodic AC status queries and one-time capability/status probes. Homey keeps only the TCP heartbeat and listens for device push updates. This avoids the known Midea 35/88 display wake, beeping and Wi-Fi-reset issue. Applies while the AC is OFF and ON.",
-            "sk": "Vypne všetky periodické stavové dotazy aj jednorazové capability/status dotazy. Homey ponechá iba TCP heartbeat a počúva aktívne hlásenia klimatizácie. Tým sa obchádza známy problém Midea s 35/88, pípaním, rozsvecovaním displeja a resetmi Wi-Fi. Platí pri vypnutej aj zapnutej klíme."
+            "en": "Light asks the AC only for its state and power, so changes made with the remote control, the filter reminder and live power reach Homey. If your AC beeps, wakes its display or shows 35/88 with Light, choose Push only.",
+            "sk": "Šetrný režim sa klímy pýta iba na stav a príkon, takže zmeny z diaľkového ovládača, pripomienka filtra a aktuálny príkon sa dostanú do Homey. Ak klíma v tomto režime pípa, rozsvecuje displej alebo ukazuje 35/88, zvoľte „Iba hlásenia klímy“."
           }
         },
         {
           "id": "poll_interval",
           "type": "number",
           "label": {
-            "en": "Active refresh interval (unsafe mode only)",
-            "sk": "Aktívny refresh interval (iba unsafe režim)"
+            "en": "Refresh interval",
+            "sk": "Interval obnovy"
           },
-          "value": 30,
-          "min": 15,
+          "value": 15,
+          "min": 10,
           "max": 600,
           "step": 5,
           "units": {
@@ -996,8 +1082,8 @@
             "sk": "s"
           },
           "hint": {
-            "en": "Ignored while Safe LAN mode is enabled. Disabling Safe LAN mode allows midea-lan to actively query the AC, which can trigger display/beep/Wi-Fi issues on affected models.",
-            "sk": "V Bezpečnom LAN režime sa ignoruje. Po vypnutí bezpečného režimu môže midea-lan aktívne dotazovať klímu; na niektorých modeloch to môže vyvolať pípanie, rozsvietenie displeja alebo reset Wi-Fi."
+            "en": "How often the AC is asked for its state and power (Light and Full mode).",
+            "sk": "Ako často sa Homey pýta klímy na stav a príkon (šetrný a úplný režim)."
           }
         },
         {

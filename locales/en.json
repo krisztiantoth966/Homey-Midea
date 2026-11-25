@@ -1,19 +1,19 @@
 {
   "pair": {
     "title": "Midea LAN",
-    "subtitle": "Connect your Midea air conditioner to Homey over the local network.",
-    "notice": "SmartHome is used only during pairing to obtain the local V3 token and key. The password is not stored. Reserve the AC IP address in your router.",
-    "ip_label": "Air conditioner IP address",
-    "ip_hint": "Recommended: reserve this address in your router. Leave it empty only to try network discovery.",
+    "subtitle": "Find your Midea air conditioner on the local network.",
+    "notice": "Homey searches the local network for air conditioners. A SmartHome account is only needed once, for a new V3 air conditioner whose key Homey does not know yet; the password is not stored.",
+    "ip_label": "Air conditioner IP address (optional)",
+    "ip_hint": "Optional. Leave empty to search the whole local network automatically.",
     "account_label": "SmartHome email or phone",
     "password_label": "SmartHome password",
-    "login_hint": "Required for most V3 Wi-Fi modules. The password is not stored after pairing.",
+    "login_hint": "Optional. Only for a new V3 air conditioner. The password is not stored.",
     "advanced_label": "Advanced: use an existing V3 token and key",
     "advanced_hint": "Use this only when you already have both values backed up.",
-    "connect_button": "Sign in to SmartHome and find the AC",
-    "connecting": "Discovering the AC, signing in to SmartHome and verifying the LAN connection…",
+    "connect_button": "Find air conditioners",
+    "connecting": "Searching the local network and verifying the LAN connection…",
     "found": "Air conditioner found.",
-    "ready": "Enter the IP address and SmartHome credentials.",
+    "ready": "Leave everything empty and press the button to search.",
     "smarthome_legend": "SmartHome account",
     "token_label": "V3 token",
     "key_label": "V3 key",
@@ -30,5 +30,9 @@
     "save": "Repair connection",
     "working": "Checking the air conditioner…",
     "done": "Connection repaired."
+  },
+  "warnings": {
+    "filter": "Clean the air filter of the air conditioner.",
+    "error_code": "The air conditioner reports error __code__."
   }
 }

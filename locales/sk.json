@@ -1,19 +1,19 @@
 {
   "pair": {
     "title": "Midea LAN",
-    "subtitle": "Pripojte Midea klimatizáciu k Homey cez lokálnu sieť.",
-    "notice": "SmartHome sa použije iba počas párovania na získanie lokálneho V3 tokenu a kľúča. Heslo sa neukladá. IP adresu klimatizácie rezervujte v routeri.",
-    "ip_label": "IP adresa klimatizácie",
-    "ip_hint": "Odporúčané: rezervujte túto adresu v routeri. Prázdne pole použite iba na pokus o automatické vyhľadanie.",
+    "subtitle": "Nájdite svoju klimatizáciu Midea v lokálnej sieti.",
+    "notice": "Homey vyhľadá klimatizácie v lokálnej sieti. SmartHome účet je potrebný iba raz, pre novú V3 klimatizáciu, ktorej kľúč Homey ešte nepozná; heslo sa neukladá.",
+    "ip_label": "IP adresa klimatizácie (nepovinné)",
+    "ip_hint": "Nepovinné. Nechajte prázdne a Homey prehľadá celú lokálnu sieť automaticky.",
     "account_label": "SmartHome e-mail alebo telefón",
     "password_label": "SmartHome heslo",
-    "login_hint": "Potrebné pre väčšinu V3 Wi-Fi modulov. Heslo sa po párovaní neukladá.",
+    "login_hint": "Nepovinné. Iba pre novú V3 klimatizáciu. Heslo sa neukladá.",
     "advanced_label": "Pokročilé: použiť existujúci V3 token a kľúč",
     "advanced_hint": "Použite iba vtedy, keď už máte obe hodnoty zálohované.",
-    "connect_button": "Prihlásiť sa do SmartHome a nájsť klimatizáciu",
-    "connecting": "Vyhľadávam klimatizáciu, prihlasujem sa do SmartHome a overujem LAN pripojenie…",
+    "connect_button": "Vyhľadať klimatizácie",
+    "connecting": "Hľadám v lokálnej sieti a overujem LAN spojenie…",
     "found": "Klimatizácia bola nájdená.",
-    "ready": "Zadajte IP adresu klimatizácie a prihlasovacie údaje SmartHome.",
+    "ready": "Nechajte polia prázdne a stlačte tlačidlo na vyhľadanie.",
     "smarthome_legend": "Účet SmartHome",
     "token_label": "V3 token",
     "key_label": "V3 kľúč",
@@ -30,5 +30,9 @@
     "save": "Opraviť pripojenie",
     "working": "Kontrolujem klimatizáciu…",
     "done": "Pripojenie bolo opravené."
+  },
+  "warnings": {
+    "filter": "Vyčistite vzduchový filter klimatizácie.",
+    "error_code": "Klimatizácia hlási chybu __code__."
   }
 }
